@@ -8,14 +8,14 @@
   },
   "plugins": [
     {
-      "name": "reprise",
-      "description": "Five skills that fire on Reprise MCP work: clone configuration & debugging, HTML tour capture, HTML tour editing, data injection setup, and end-of-session recap + friction reporting. Designed to make the Reprise MCP land tasks first-time-right across every agent surface.",
+      "name": "reprise-mcp-skills",
+      "description": "Six skills that fire on Reprise MCP work: a router (`reprise-mcp`), clone configuration & debugging, HTML tour capture, HTML tour editing, data injection setup, and end-of-session recap + friction reporting. Designed to make the Reprise MCP land tasks first-time-right across every agent surface.",
       "author": {
         "name": "Reprise",
         "email": "support@reprise.com"
       },
       "category": "productivity",
-      "source": "./plugins/reprise",
+      "source": "./plugins/reprise-mcp-skills",
       "homepage": "https://reprise.com"
     }
   ]

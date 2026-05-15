@@ -1,5 +1,5 @@
 {
-  "name": "reprise",
+  "name": "reprise-mcp-skills",
   "description": "Workflow skills for the Reprise MCP. Fires on clone configuration & debugging, HTML tour capture, HTML tour editing, data injection setup, and end-of-session recap. Companion to the Reprise MCP — install both to get first-time-right task completion.",
   "author": {
     "name": "Reprise",
