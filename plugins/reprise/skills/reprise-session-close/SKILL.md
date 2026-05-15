@@ -6,7 +6,7 @@ version: 0.1.0
 
 # Reprise Session Close
 
-Every Reprise MCP session should end with one `session_recap` call and one `report_friction` call per distinct friction point encountered. These power Reprise's internal triage of agent sessions (`/staff/sessions`) and friction tracking (`/staff/friction`).
+Every Reprise MCP session should end with one `session_recap` call and one `report_friction` call per distinct friction point encountered. These tools record what happened so the session can be reviewed and patterns can be improved over time.
 
 End-of-session is exactly when models forget to call cleanup tools, which is why this is a skill — a triggered skill at "you're wrapping up" intent is more reliable than a buried instruction inside `session_recap`'s tool description.
 
