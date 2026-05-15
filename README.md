@@ -1,6 +1,8 @@
-# reprise-skills
+# Reprise MCP Skills
 
 Workflow skills for the Reprise MCP — a router plus surface skills covering Clone configuration, HTML tour capture, HTML tour editing, data injection, and end-of-session reporting.
+
+Repo slug: `reprise-skills`. Plugin slug: `reprise-mcp-skills`. Both kept lowercase-kebab to match plugin/CLI conventions.
 
 Authored once as standard `SKILL.md` files; install from this Git repo on every major agent surface. Designed to make the Reprise MCP land tasks first-time-right.
 
