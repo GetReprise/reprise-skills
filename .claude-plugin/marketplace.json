@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "reprise-skills",
+  "description": "Workflow skills for the Reprise MCP — Clone configuration, HTML tour capture, HTML editing, data injection, and end-of-session reporting. Author once, distribute across Claude / Codex / Copilot / Gemini / Cursor / ChatGPT.",
+  "owner": {
+    "name": "Reprise",
+    "email": "support@reprise.com"
+  },
+  "plugins": [
+    {
+      "name": "reprise",
+      "description": "Five skills that fire on Reprise MCP work: clone configuration & debugging, HTML tour capture, HTML tour editing, data injection setup, and end-of-session recap + friction reporting. Designed to make the Reprise MCP land tasks first-time-right across every agent surface.",
+      "author": {
+        "name": "Reprise",
+        "email": "support@reprise.com"
+      },
+      "category": "productivity",
+      "source": "./plugins/reprise",
+      "homepage": "https://reprise.com"
+    }
+  ]
+}
