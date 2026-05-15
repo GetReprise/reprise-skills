@@ -1,7 +1,7 @@
 ---
 name: reprise-html-capture
 description: "Reprise HTML tour capture workflow — recording NEW tours via the Reprise Builder HTML Chrome extension. MUST be invoked before any `html_capture` call. Triggers on `html_capture`, `pairing_token`, `deep_link_url`, `capture_now`, a brand-new `draft_id`, or the Reprise Builder HTML extension. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the 7-step capture flow, the 3-tier extension-pairing escalation, and the page-settle rules. NOT for editing existing replays — use `reprise-html-edit` for that."
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Reprise HTML Tour Capture
@@ -59,6 +59,14 @@ Never send the `chrome-extension://` URL as a clickable `<a href>` — Chrome bl
 
 Don't proceed past `ensure_toolbar` until status confirms — commands to an unpaired session silently no-op.
 
+### If the user doesn't have the extension
+
+There is no extensionless / agent-headless capture path. Send them to the Chrome Web Store install page: https://chrome.google.com/webstore/detail/reprise-product-capture/nnoknbhinidmlidfbhcikejmpfdlbpnj — or, if your browser-automation MCP is available, navigate their browser there directly. Wait for them to confirm install before re-running `start`.
+
+## Pattern search before custom JS or diagnosis
+
+Before writing custom JS for a screen, or diagnosing a broken tour, call `search_patterns(symptom='...', product='html')`. Returns top-k matches by semantic similarity; treat `score < ~0.5` as weak guesses (the HTML pattern corpus is thinner than clone's).
+
 ## Page-settle before each capture
 
 A capture of an unsettled page produces an unstyled / half-rendered screen with **no error signal**. JS-heavy pages (Webflow, Framer, SaaS dashboards) load stylesheets after `DOMContentLoaded`.
@@ -92,9 +100,19 @@ Synchronous by default. Returns `{ok, observed_capture, timed_out, screen_count_
 - `timed_out: true, observed_capture: false` → extension didn't pick up the command. Re-check `extension_last_seen_at`.
 - `observed_capture: false, timed_out: false`, hint `"no capture in flight"` → nothing was queued. Safe to proceed.
 
+## Continuous capture (`set_auto`)
+
+`html_capture(action='set_auto', auto=True, pairing_token=...)` flips the extension into continuous mode: it captures automatically on SPA navigation (`pushState` / `replaceState` / `popstate` / `hashchange`), modal / menu / popover appearance, or bulk DOM mutation (≥25 added nodes within a 500ms window). 500ms debounce, 2s post-fire cooldown.
+
+Use sparingly — explicit `capture_now` calls give precise control. Auto mode is for sessions where the user is driving and the agent is recording.
+
 ## Preview before publish
 
 `flush_complete=true` means every screen is processed. **Always wait for `flush_complete=true` before opening `preview_url`** — otherwise the preview shows placeholders for screens still being processed.
+
+## Post-stop cleanup is automatic
+
+After `html_capture(action='stop')`, the toolbar is gone from every tab the session touched — the extension's unpair logic strips agent-added hosts and reloads affected tabs. No DOM-scan verification needed.
 
 ## After every session
 

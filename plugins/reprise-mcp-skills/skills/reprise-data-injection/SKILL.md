@@ -1,7 +1,7 @@
 ---
 name: reprise-data-injection
 description: Reprise Data Injection configuration workflow. MUST be invoked before any `injection_*` MCP call. Primarily for injecting data into a LIVE application via the Reprise extension; secondarily into a Reprise clone. Covers populating charts, tables, KPI tiles, dropdowns by swapping API responses at runtime. Triggers on any `injection_*` MCP tool, `dataset_id`, `Dataset → Source → Value`, `data injection`, or `Data Studio`. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the two-phase wiring/data framework, the canonical entry point, the activation handshake, and the top 5 silent-failure gotchas. NOT a target — data injection cannot inject into an HTML replay directly.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Reprise Data Injection

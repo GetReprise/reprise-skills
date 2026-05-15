@@ -1,12 +1,36 @@
 ---
 name: reprise-html-edit
 description: Reprise HTML tour editing workflow — modifying an existing HTML replay. MUST be invoked before any edit action on a published or draft replay. Triggers on `html_edit`, `html_screen(action='copy_to')`, `html_guide`, `html_variable`, `html_link`, `set_custom`, or any request to modify / translate / rebrand an existing replay. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the draft-vs-published ID model, the re-skin workflow, the compose-from-screens workflow, and the `--rguide-*` CSS surface. Distinct from `reprise-html-capture` (which is for recording new tours).
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Reprise HTML Tour Editing
 
 Editing an existing HTML replay covers text/attribute/image edits, translation, guide management, variables, re-skinning to a new vertical, and stitching new replays together from screens of existing ones.
+
+## Inspecting and editing — tool quick-reference
+
+| Action | Tool |
+|---|---|
+| Details + screens list | `html(draft_id=...)` / `html(published_id=...)` |
+| Screen content | `html_screen(action='list'\|'get'\|'search', ...)` (list returns per-screen `preview_url` for v4 replays — a deep link to a specific screen) |
+| Enumerate captured-screen text | `html_edit(action='list_text_nodes', ...)` — filter with `text_contains` / `path_contains` / `screen_node_id` |
+| Edit text | `html_edit(action='edit_text', edits='[{...}]')` — one call = one undo step; `dry_run=True` previews |
+| Edit element attributes (`href`, `alt`, `class`, `aria-*`, `data-*`) | `html_edit(action='list_attribute_nodes'\|'edit_attributes', ...)` |
+| Swap an image | `html_edit(action='replace_image', src=<URL or resource:id>)` |
+| Bulk translate visible text (meaning-preserving) | `html_edit(action='translate', ...)` |
+| Compose new replay from existing screens | `html_screen(action='copy_to'\|'copy_status', ...)` |
+| In-screen guides | `html_guide(action='generate'\|'list'\|'get'\|'update', ...)` |
+| Variables | `html_variable(action='list'\|'get'\|'references'\|'create'\|'update'\|'delete'\|'insert', ...)` |
+| Per-replay custom CSS / JS injection | `html_lifecycle(action='get_custom'\|'set_custom', kind='guide_css'\|..., ...)` |
+| Lifecycle (publish, duplicate, archive, restore, update_title, etc.) | `html_lifecycle(action='...', ...)` |
+| Shareable published links | `html_link(action='create', published_id=..., variables=...)` |
+
+`set_custom` returns metadata only (bytes, sha256, last_saved, unchanged, preview_url) so iterative edit loops don't flood context.
+
+## Pattern search before custom JS or diagnosis
+
+Before writing custom JS for a screen or diagnosing a broken replay, call `search_patterns(symptom='...', product='html')`. Returns top-k matches by semantic similarity; treat `score < ~0.5` as weak guesses (the HTML pattern corpus is thinner than clone's).
 
 ## Draft vs published IDs (the one-paragraph version)
 
@@ -41,6 +65,12 @@ Use when the user wants a tour stitched together from screens that already exist
 ### Verify shared-chrome matches before adding screens
 
 A search hit that comes from a shared sidebar/nav surfaces every screen with that chrome — even when the screen's primary content is unrelated. `html_screen(action='search')` flags this with `cross_screen_match_count` per snippet, `likely_shared_chrome: true` on flagged screens, and a top-level `verification_hint`. For each flagged screen, call `html_screen(action='get', screen_id=...)` and read the headings before adding it to a new tour.
+
+### Compose caveats
+
+- Both source and target must be **v4+ drafts**. Legacy v3 replays are rejected with `error: requires_v4_replay`.
+- Source and target must differ. To clone an entire replay, use `html_lifecycle(action='duplicate')`.
+- Search is **literal text matching** against screen HTML + guide markdown — no OCR or LLM-generated descriptions.
 
 ## Variables and links
 

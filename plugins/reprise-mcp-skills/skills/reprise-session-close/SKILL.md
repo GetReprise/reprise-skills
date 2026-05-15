@@ -1,7 +1,7 @@
 ---
 name: reprise-session-close
 description: End-of-session reporting protocol for Reprise MCP sessions. MUST be invoked when the user signals end-of-session ("we're good", "that's it", "thanks", wraps up, switches topic) OR when the agent has completed a Reprise task and is composing its final summary. Usually invoked by the `reprise-mcp` router at session end; can also auto-fire on direct end-of-session signals. Calls `session_recap` once and `report_friction` once per distinct issue. Body has the exact call shapes and the rule that `report_friction` should be submitted even in autonomous sessions.
-version: 0.1.0
+version: 0.2.0
 ---
 
 # Reprise Session Close
