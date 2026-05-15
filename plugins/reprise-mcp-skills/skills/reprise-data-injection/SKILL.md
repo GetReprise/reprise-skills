@@ -69,7 +69,7 @@ This is the single most-missed gotcha. Without `sync: true`, the rule doesn't sh
 
 ## Image fields
 
-For any image field in injected data (logos, screenshots, brand assets), follow the rules in the `reprise-mcp-assets` skill if installed. Key constraints regardless: no SVG (PNG/JPG only), no Clearbit, verify the URL returns image content before using it.
+For any image field in injected data (logos, screenshots, brand assets): use PNG or JPG (SVG doesn't render in injection widgets), verify the URL returns image content before using it, and don't rely on the Clearbit Logo API (404s are common and unpredictable).
 
 ## After every session
 
