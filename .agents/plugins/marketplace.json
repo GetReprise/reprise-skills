@@ -1,0 +1,17 @@
+{
+  "name": "reprise-skills",
+  "description": "Workflow skills for the Reprise MCP.",
+  "owner": {
+    "name": "Reprise",
+    "email": "support@reprise.com"
+  },
+  "plugins": [
+    {
+      "name": "reprise-mcp-skills",
+      "description": "Workflow skills for the Reprise MCP.",
+      "source": "./plugins/reprise-mcp-skills",
+      "category": "productivity",
+      "homepage": "https://reprise.com"
+    }
+  ]
+}

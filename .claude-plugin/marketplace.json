@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "reprise-skills",
+  "description": "Workflow skills for the Reprise MCP.",
+  "owner": {
+    "name": "Reprise",
+    "email": "support@reprise.com"
+  },
+  "plugins": [
+    {
+      "name": "reprise-mcp-skills",
+      "description": "Workflow skills for the Reprise MCP.",
+      "author": {
+        "name": "Reprise",
+        "email": "support@reprise.com"
+      },
+      "category": "productivity",
+      "source": "./plugins/reprise-mcp-skills",
+      "homepage": "https://reprise.com"
+    }
+  ]
+}

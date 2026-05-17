@@ -1,0 +1,9 @@
+{
+  "name": "reprise-mcp-skills",
+  "description": "Workflow skills for the Reprise MCP.",
+  "author": {
+    "name": "Reprise",
+    "email": "support@reprise.com"
+  },
+  "version": "0.3.2"
+}
