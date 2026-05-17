@@ -1,7 +1,7 @@
 ---
 name: reprise-mcp
-description: Required entry point and router for ALL Reprise MCP work. MUST be invoked immediately whenever the user wants to do anything with Reprise — fixing / building / editing / debugging / rebranding a Reprise demo, preview, tour, replay, or captured app; troubleshooting blank or broken pages in a Reprise context; or any mention of "Reprise", "demo" (in a Reprise context), "replay", "capture", "preview URL", or any Reprise MCP tool. Customers describe tasks in plain English ("fix my demo", "add data to this page", "build a tour of HubSpot", "make this look like a prospect") without naming Reprise's product surfaces; this router maps natural-language asks to the right surface skill (`reprise-clone-config`, `reprise-html-capture`, `reprise-html-edit`, `reprise-data-injection`, or `reprise-session-close`) and invokes it explicitly. Always read this skill first on any Reprise turn — it is the entry point.
-version: 0.2.0
+description: Required entry point and router for ALL Reprise MCP work. MUST be invoked immediately whenever the user wants to do anything with Reprise — fixing / building / editing / debugging / rebranding a Reprise demo, tour, clone, or captured app; troubleshooting blank or broken pages in a Reprise context; or any mention of "Reprise", "demo" (in a Reprise context), "tour", "capture", "preview URL", or any Reprise MCP tool. Users describe tasks in plain English ("fix my demo", "add data to this page", "build a tour of your app", "make this look like a different prospect") without naming Reprise's product surfaces; this router maps natural-language asks to the right surface skill (`reprise-clone-config`, `reprise-tour-capture`, `reprise-tour-edit`, `reprise-tour-id-model`, `reprise-injection`, or `reprise-session-close`) and invokes it explicitly. Always read this skill first on any Reprise turn — it is the entry point.
+version: 0.3.0
 ---
 
 # Reprise MCP — Router
@@ -11,8 +11,8 @@ You've landed here because the user wants to do Reprise work. This skill carries
 ## Step 1 — Confirm Reprise context
 
 You're in scope if:
-- The user mentions Reprise, a Reprise preview URL, a Reprise demo, a clone / replay / tour, or any Reprise MCP tool.
-- The Reprise MCP is connected and its tools (`clone_*`, `html_*`, `injection_*`, `docs`, `search_patterns`, `session_recap`, `report_friction`) are available.
+- The user mentions Reprise, a Reprise preview URL, a Reprise demo, a clone / tour, or any Reprise MCP tool.
+- The Reprise MCP is connected and its tools (`clone_*`, `tour_*`, `injection_*`, `docs`, `search_patterns`, `session_recap`, `report_friction`) are available.
 
 If neither is true, this skill shouldn't have fired — answer the user's actual question without routing.
 
@@ -20,9 +20,10 @@ If neither is true, this skill shouldn't have fired — answer the user's actual
 
 | Surface | The user is asking for | Cues |
 |---|---|---|
-| **Clone** (formerly Replicate) | Fix / debug / configure a captured interactive app | `clone_id`, `RB snippet`, `clone_api`, `replay_backend`, any `clone_*` MCP tool, `/sw-setup/` URL, "captured app", "the demo white-screens / goes blank / breaks after login", service-worker issues, snippet editing |
-| **HTML Tour, NEW capture** (formerly Replay) | Record a new tour by capturing screens | `html_capture`, `pairing_token`, `deep_link_url`, `capture_now`, a brand-new `draft_id`, "Reprise Builder HTML extension", "record a tour", "build a tour of X", "capture screens" |
-| **HTML Tour, EDITING existing** | Modify an existing replay (text, attributes, images, guides, translation, re-skin) | `html_edit`, `html_screen(action='copy_to')`, `html_guide`, `html_variable`, `html_link`, `set_custom`, "edit this replay", "translate to X", "re-skin for prospect Y", "rebrand the tour", "add a guide / variable" |
+| **Clone** | Fix / debug / configure a captured interactive app | `clone_id`, snippet, `clone_api`, `replay_backend`, any `clone_*` MCP tool, `/sw-setup/` URL, "captured app", "the demo white-screens / goes blank / breaks after login", service-worker issues, snippet editing |
+| **Product Tour, NEW capture** | Record a new tour by capturing screens | `tour_capture`, `pairing_token`, `deep_link_url`, `capture_now`, a brand-new `draft_id`, "Reprise Builder HTML extension", "record a tour", "build a tour of X", "capture screens" |
+| **Product Tour, EDITING existing** | Modify an existing tour (text, attributes, images, guides, translation, re-skin) | `tour_edit`, `tour_screen(action='copy_to')`, `tour_guide`, `tour_variable`, `tour_link`, `set_custom`, "edit this tour", "translate to X", "re-skin for prospect Y", "rebrand the tour", "add a guide / variable" |
+| **Product Tour, ID confusion** | Resolve a paste of a `/launch/<slug>/` URL or a `wrong_id_kind` error | `draft_id`, `published_id`, `PublishedReplayLink`, `/launch/<slug>/`, `wrong_id_kind`, `tour_not_found`, "what's the draft for this published tour", "I have a launch URL" |
 | **Data Injection** | Populate charts / tables / dropdowns with custom data by swapping API responses | any `injection_*` MCP tool, `dataset_id`, `Dataset → Source → Value`, "Data Studio", "populate the chart", "fake data on this page", "swap the API response", "inject data into the live app" (primary case) |
 
 If exactly one surface matches, go to Step 4.
@@ -32,8 +33,8 @@ If exactly one surface matches, go to Step 4.
 If the prompt doesn't clearly indicate which surface (common with vague phrasings like "fix my Reprise demo," "build me a demo for [prospect]," "the page is broken"), ask **one** clarifying question:
 
 > Are you working on:
-> - **Clone** — an interactive captured app you're configuring or debugging (formerly Replicate)?
-> - **HTML Tour** — a linear product tour from captured screens (formerly Replay)? *(And: building new, or editing existing?)*
+> - **Clone** — an interactive captured app you're configuring or debugging?
+> - **Product Tour** — a linear walkthrough from captured screens? *(And: building new, or editing existing?)*
 > - **Data Injection** — swapping API responses on a live app to populate charts / tables?
 
 Don't guess; don't proceed without the answer. A wrong surface guess wastes far more time than one clarifying turn.
@@ -43,11 +44,12 @@ Don't guess; don't proceed without the answer. A wrong surface guess wastes far 
 Call the right skill explicitly. Do this BEFORE any other tool call:
 
 - **Clone** → `Skill(skill="reprise:reprise-clone-config")`
-- **HTML Tour, new capture** → `Skill(skill="reprise:reprise-html-capture")`
-- **HTML Tour, editing existing** → `Skill(skill="reprise:reprise-html-edit")`
-- **Data Injection** → `Skill(skill="reprise:reprise-data-injection")`
+- **Tour, new capture** → `Skill(skill="reprise:reprise-tour-capture")`
+- **Tour, editing existing** → `Skill(skill="reprise:reprise-tour-edit")`
+- **Tour ID confusion** → `Skill(skill="reprise:reprise-tour-id-model")`
+- **Data Injection** → `Skill(skill="reprise:reprise-injection")`
 
-For HTML Tour, the verb is the signal: "build / record / capture / make a tour" → `reprise-html-capture`; "edit / translate / re-skin / change / fix / add a guide / rebrand" → `reprise-html-edit`.
+For Product Tour, the verb is the signal: "build / record / capture / make a tour" → `reprise-tour-capture`; "edit / translate / re-skin / change / fix / add a guide / rebrand" → `reprise-tour-edit`. The ID-model skill is a focused side-load when you hit an ID error or a launch-URL paste.
 
 ## Step 5 — At end of session
 

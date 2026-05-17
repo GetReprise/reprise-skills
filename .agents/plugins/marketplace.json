@@ -1,6 +1,6 @@
 {
   "name": "reprise-skills",
-  "description": "Workflow skills for the Reprise MCP. Codex repo-scoped marketplace manifest — verify schema against current Codex plugin spec before publishing.",
+  "description": "Workflow skills for the Reprise MCP.",
   "owner": {
     "name": "Reprise",
     "email": "support@reprise.com"
@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "reprise-mcp-skills",
-      "description": "Reprise MCP Skills — six skills that fire on Reprise MCP work: router, clone configuration & debugging, HTML tour capture, HTML tour editing, data injection setup, and end-of-session recap.",
+      "description": "Workflow skills for the Reprise MCP.",
       "source": "./plugins/reprise-mcp-skills",
       "category": "productivity",
       "homepage": "https://reprise.com"
