@@ -12,6 +12,13 @@
       "source": "./plugins/reprise-mcp-skills",
       "category": "productivity",
       "homepage": "https://reprise.com"
+    },
+    {
+      "name": "reprise-mcp-skills-v2",
+      "description": "Workflow skills for the Reprise MCP v2 (atomic per-action surface).",
+      "source": "./plugins/reprise-mcp-skills-v2",
+      "category": "productivity",
+      "homepage": "https://reprise.com"
     }
   ]
 }

@@ -16,6 +16,8 @@ You're in scope if:
 
 If neither is true, this skill shouldn't have fired — answer the user's actual question without routing.
 
+If the connected MCP is **v2 atomic** (you see tools like `tour_dom_text_edit`, `tour_capture_session_start`, `injection_dataset_create`, or the MCP lives under `/v2/mcp/`), this is the wrong router — use the v2 plugin (`reprise-mcp-skills-v2`) instead.
+
 ## Step 2 — Identify the surface from cues
 
 | Surface | The user is asking for | Cues |

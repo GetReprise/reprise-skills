@@ -22,8 +22,8 @@ If your client uses deferred tool schemas (Claude Cowork, etc.), preload everyth
 2. `tour_capture(action='start', draft_id=...)` → `{pairing_token, deep_link_url, ...}`.
 3. **Pair the extension** (3-tier escalation, see below — highest failure point).
 4. `tour_capture(action='status', pairing_token=...)` until `extension_last_seen_at` is fresh (<10s) ⇒ paired.
-5. `tour_capture(action='ensure_toolbar', pairing_token=..., target_url='https://...')`. **On a browser-automation MCP, follow this with an explicit `navigate(tabId, target_url)` and confirm `#reprise_iframe` is in the DOM before continuing — see "Browser-automation MCPs" below.**
-6. Per-screen loop: browser MCP navigate / click → wait for settle → `tour_capture(action='capture_now', pairing_token=..., title='Step N', target_url='...', wait=False)` → poll `tour_capture(action='status', pairing_token=...)` and **verify `screen_count` actually incremented**. `capture_now` returns `ok=true` even when no tab matches `target_url` — the SW accepted the command, but couldn't dispatch it; nothing was captured. `screen_count` unchanged + `extension_last_seen_at` still fresh = re-issue `ensure_toolbar` + an explicit `navigate(tabId, target_url)` to re-mount the toolbar, then retry. **Default to `wait=False`.** The default `wait=True` sync window exceeds the ~25-30s cap on the Anthropic MCP proxy and Claude Cowork — the underlying capture completes but the response gets killed mid-flight, which looks like a failure when it isn't.
+5. **On browser-automation MCPs** (Claude in Chrome, Playwright, etc.): first `navigate(tabId, target_url)` to put the MCP tab onto the URL, *then* `tour_capture(action='ensure_toolbar', pairing_token=..., target_url='https://...')`, *then* probe the DOM for `#reprise_iframe` to confirm — see "Browser-automation MCPs" below. **On user-Chrome drivers** (AppleScript, native browser-use): `tour_capture(action='ensure_toolbar', ...)` alone is enough; the SW finds the user's tab by URL and reloads it.
+6. Per-screen loop: browser MCP navigate / click → wait for settle → `tour_capture(action='capture_now', pairing_token=..., title='Step N', target_url='...', wait=False)` → poll `tour_capture(action='status', pairing_token=...)` and **verify `screen_count` actually incremented**. `capture_now` returns `ok=true` even when no tab matches `target_url` — the SW accepted the command, but couldn't dispatch it; nothing was captured. `screen_count` unchanged + `extension_last_seen_at` still fresh = the toolbar isn't mounted in any tab the SW can find. Recovery: re-`navigate(tabId, target_url)` first, then re-issue `tour_capture(action='ensure_toolbar', ...)` — and because the same `(action, payload)` is deduplicated server-side for ~120s, append a cache-buster (`target_url='https://example.com/?_rt=1'`) on the retry so the command actually reaches the SW. **Default to `wait=False`.** The default `wait=True` sync window exceeds the ~25-30s cap on the Anthropic MCP proxy and Claude Cowork — the underlying capture completes but the response gets killed mid-flight, which looks like a failure when it isn't.
 7. `tour_capture(action='stop', pairing_token=...)`, then `tour_lifecycle(action='publish', draft_id=...)`.
 
 **Always pass `target_url` to `ensure_toolbar` and `capture_now`.** Without it the SW falls back to "active tab in the last-focused Chrome window" and silently picks the wrong tab in multi-window or background-agent setups.
@@ -42,13 +42,18 @@ Don't proceed past `ensure_toolbar` until status confirms pairing — commands t
 
 ## Browser-automation MCPs (Claude in Chrome, Playwright, etc.)
 
-The extension's `ensure_toolbar` step allow-lists the host and reloads the tab so the content script injects. **The reload step does not reach tabs in Chrome's MCP tab group** — those tabs live in a separate group ID from the user's normal tabs, and the extension's tab-matcher misses them. On a browser-automation MCP, after `ensure_toolbar` returns `ok:true`:
+The extension's `ensure_toolbar` allow-lists the host and reloads any tab whose URL matches `target_url` (it queries Chrome for all tabs on that origin — automation tab groups included; that part isn't the issue). The catch: **on browser-automation MCPs the agent's tab is typically NOT yet on `target_url` when `ensure_toolbar` is called**, so the SW finds no tab to reload and the toolbar never mounts. Re-issuing the same `ensure_toolbar(target_url=...)` within ~120s is deduplicated server-side, so the retry silently no-ops.
 
-1. Issue an explicit `navigate(tabId, target_url)` on the same tab. Same URL is fine — what matters is the navigation event.
-2. After settle, probe the DOM for `#reprise_iframe`. Its presence is the *only* signal that the content script loaded.
-3. If absent, the toolbar didn't mount — retry the navigate, or confirm `tour_capture(action='status')` still shows the extension as fresh.
+Correct order on a browser-automation MCP:
+
+1. `navigate(tabId, target_url)` — put the MCP tab onto the target URL first. Wait for settle.
+2. `tour_capture(action='ensure_toolbar', pairing_token=..., target_url=...)` — the SW now finds the tab and reloads it; the content script injects.
+3. After settle, probe the DOM for `#reprise_iframe`. Its presence is the *only* signal that the toolbar mounted.
+4. If absent: verify `tour_capture(action='status')` shows the extension as fresh, then re-`navigate` and re-issue `ensure_toolbar` — but append a cache-buster (`?_rt=1`) to the `target_url` on the retry so it doesn't dedup against the prior call.
 
 This only matters for the first `capture_now` in the session. Subsequent same-origin navigations keep the iframe mounted.
+
+On user-Chrome drivers (AppleScript, native browser-use) you don't need the upfront navigate: the user's tab is already on a real page, the SW reloads it, and the content script mounts. Skip straight to `ensure_toolbar`.
 
 ## Two pre-capture principles that prevent the most common silent failures
 
