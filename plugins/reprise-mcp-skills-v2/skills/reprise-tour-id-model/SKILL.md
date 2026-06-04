@@ -57,6 +57,6 @@ Full hint text for each error, the wire-format mapping (`demo_kind="replay_draft
 
 ## After every session
 
-`summary_report` + `friction_report` per distinct issue — see `reprise-session-close`.
+`platform_summary_report` + `platform_friction_report` per distinct issue — see `reprise-session-close`.
 
 For new-tour capture: `reprise-tour-capture`. For editing an existing tour: `reprise-tour-edit`.

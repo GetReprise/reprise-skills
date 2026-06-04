@@ -12,7 +12,7 @@ A Product Tour is a linear walkthrough built from captured DOM snapshots. Captur
 
 If your client uses deferred tool schemas (Claude Cowork, etc.), preload everything you'll need in **one** `ToolSearch` call before step 1 — discovering tools mid-flow forces back-to-back schema loads that fragment the workflow. The full set for a capture session:
 
-- Reprise MCP (v2): `tour_create`, `tour_publish`, `tour_capture_session_start`, `tour_capture_session_status`, `tour_capture_session_stop`, `tour_capture_toolbar_mount`, `tour_capture_now`, `tour_screen_list`, `tour_screen_get`, `tour_screen_node_list`, `tour_guide_create`, `tour_docs` (for install-URL fallback), `whoami` (only if you have multiple Reprise MCPs connected and need to pick by host)
+- Reprise MCP (v2): `tour_create`, `tour_publish`, `tour_capture_session_start`, `tour_capture_session_status`, `tour_capture_session_stop`, `tour_capture_toolbar_mount`, `tour_capture_now`, `tour_screen_list`, `tour_screen_get`, `tour_screen_node_list`, `tour_guide_create`, `tour_docs` (for install-URL fallback), `platform_whoami` (only if you have multiple Reprise MCPs connected and need to pick by host)
 - Browser-automation MCP (Claude in Chrome, Playwright, etc.): `list_connected_browsers`, `select_browser`, `tabs_context_mcp`, `navigate`, `javascript_tool` (and your tool inspector / `get_page_text` equivalent for verifying iframe presence)
 - Task tracking: `TaskCreate`, `TaskUpdate` (if your client has them and the flow is ≥3 steps)
 
@@ -83,6 +83,6 @@ Reprise MCP calls occasionally return `Session terminated` from the transport la
 
 ## After every session
 
-`summary_report` + `friction_report` per distinct issue — see `reprise-session-close`.
+`platform_summary_report` + `platform_friction_report` per distinct issue — see `reprise-session-close`.
 
 `tour_capture_now` envelope fields, async / fire-and-forget mode, post-stop toolbar cleanup, install URLs, theming via `--rguide-*`, re-skinning, composing tours from screens of other tours — all in `tour_docs(slug='tour')`. For editing existing tours (not capturing new ones), use the `reprise-tour-edit` skill. If you have a `/launch/<slug>/` URL or hit a `wrong_id_kind` error, see `reprise-tour-id-model`.

@@ -87,6 +87,6 @@ A search hit that comes from a shared sidebar/nav surfaces every screen with tha
 
 ## After every session
 
-`summary_report` + `friction_report` per distinct issue — see `reprise-session-close`.
+`platform_summary_report` + `platform_friction_report` per distinct issue — see `reprise-session-close`.
 
 The full editor surface (lifecycle actions, custom kinds, search semantics, v3-vs-v4 constraints, capture toolbar mount, full theming token list) lives in `tour_docs(slug='tour')`. For ID-kind questions, see `reprise-tour-id-model`.

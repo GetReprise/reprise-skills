@@ -111,6 +111,6 @@ The full catalog is in `tour_docs(slug='injection')`. These three are silent —
 
 ## After every session
 
-`summary_report` + `friction_report` per distinct issue — see `reprise-session-close`.
+`platform_summary_report` + `platform_friction_report` per distinct issue — see `reprise-session-close`.
 
 For everything else — full vocabulary, complete gotcha catalog, response-template derivation algorithm, adapter mechanics, response-shape trims, failure-modes table, activation-reason taxonomy, resuming prior sessions — `tour_docs(slug='injection')`.

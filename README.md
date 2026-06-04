@@ -5,7 +5,7 @@ Workflow skills for the Reprise MCP. URL is shared directly by Reprise; this rep
 Two plugins ship from this marketplace — pick the one that matches the MCP you're connected to:
 
 - **`reprise-mcp-skills`** — the v1 plugin, targets the polymorphic `action=` Reprise MCP at `/mcp/`.
-- **`reprise-mcp-skills-v2`** — the v2 plugin, targets the atomic per-action Reprise MCP at `/v2/mcp/` (and per-product scoped paths). Tool names like `tour_dom_text_edit`, `injection_dataset_create`, `summary_report`.
+- **`reprise-mcp-skills-v2`** — the v2 plugin, targets the atomic per-action Reprise MCP at `/v2/mcp/` (and per-product scoped paths). Tool names like `tour_dom_text_edit`, `injection_dataset_create`, `platform_summary_report`.
 
 ## Install (Claude Code)
 
@@ -49,6 +49,6 @@ The v2 plugin omits `reprise-clone-config` for now — Clone is rebuilt later in
 Skills assume the corresponding Reprise MCP is connected.
 
 - v1: `tour_*`, `clone_*`, `injection_*`, `docs`, `search_patterns`, `session_recap`, `report_friction`.
-- v2: `tour_*` (atomic), `injection_*` (atomic), `tour_docs`, `tour_guidance`, `whoami`, `summary_report`, `friction_report`.
+- v2: `tour_*` (atomic), `injection_*` (atomic), `tour_docs`, `tour_guidance`, and cross-product `platform_*` (`platform_whoami`, `platform_summary_report`, `platform_friction_report`, `platform_folder_*`, `platform_asset_move`).
 
 Without the relevant MCP, the referenced tools aren't available and the skills won't fire usefully.

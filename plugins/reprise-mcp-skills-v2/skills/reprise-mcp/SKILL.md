@@ -12,7 +12,7 @@ You've landed here because the user wants to do Reprise work. This skill carries
 
 You're in scope if:
 - The user mentions Reprise, a Reprise preview URL, a Reprise demo, a tour, or any Reprise MCP tool.
-- The Reprise MCP v2 is connected. Tools you'll see: `tour_*` (69 atomic tools), `injection_*` (19 atomic tools), `tour_docs`, `tour_guidance`, `whoami`, `friction_report`, `summary_report`. Per-product scoped endpoints (`/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`) expose a smaller catalog for callers who only need one product.
+- The Reprise MCP v2 is connected. Tools you'll see: `tour_*` (62 atomic tools, incl. `tour_docs` / `tour_guidance` / `tour_search`), `injection_*` (19 atomic tools), and cross-product `platform_*` (8): `platform_whoami`, `platform_friction_report`, `platform_summary_report`, plus the shared asset library `platform_folder_*` / `platform_asset_move`. Per-product scoped endpoints (`/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`) expose a smaller catalog for callers who only need one product.
 
 If neither is true, this skill shouldn't have fired — answer the user's actual question without routing.
 
@@ -60,7 +60,7 @@ Regardless of which surface skill ran, when the user signals end-of-session ("we
 
 `Skill(skill="reprise-mcp-skills-v2:reprise-session-close")`
 
-That skill carries the `summary_report` and `friction_report` call shapes (renamed from v1's `session_recap` / `report_friction`).
+That skill carries the `platform_summary_report` and `platform_friction_report` call shapes (renamed from v1's `session_recap` / `report_friction`).
 
 ## What this skill is NOT
 
