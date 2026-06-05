@@ -12,7 +12,7 @@ You've landed here because the user wants to do Reprise work. This skill carries
 
 You're in scope if:
 - The user mentions Reprise, a Reprise preview URL, a Reprise demo, a tour, or any Reprise MCP tool.
-- The Reprise MCP v2 is connected. Tools you'll see: `tour_*` (62 atomic tools, incl. `tour_docs` / `tour_guidance` / `tour_search`), `injection_*` (19 atomic tools), and cross-product `platform_*` (8): `platform_whoami`, `platform_friction_report`, `platform_summary_report`, plus the shared asset library `platform_folder_*` / `platform_asset_move`. Per-product scoped endpoints (`/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`) expose a smaller catalog for callers who only need one product.
+- The Reprise MCP v2 is connected. Tools you'll see: `tour_*` (62 atomic tools, incl. `tour_docs` / `tour_guidance` / `tour_search`), `injection_*` (20 atomic tools, incl. `injection_docs`), `clone_docs` for Clone product guides, and cross-product `platform_*` (8): `platform_whoami`, `platform_friction_report`, `platform_summary_report`, plus the shared asset library `platform_folder_*` / `platform_asset_move`. Per-product scoped endpoints (`/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`) expose a smaller catalog for callers who only need one product.
 
 If neither is true, this skill shouldn't have fired — answer the user's actual question without routing.
 
@@ -65,5 +65,5 @@ That skill carries the `platform_summary_report` and `platform_friction_report` 
 ## What this skill is NOT
 
 - It's not a workflow skill. Don't enumerate phases from here.
-- It's not the place for gotchas, forcing functions, or method references — those live in the surface skills' bodies and in `tour_docs(slug='...')`.
+- It's not the place for gotchas, forcing functions, or method references — those live in the surface skills' bodies and in the matching `*_docs(slug='...')` for the product you're working in (`tour_docs`, `injection_docs`, `clone_docs`).
 - It's not a fallback if you forgot which skill to invoke — pick one consciously.
