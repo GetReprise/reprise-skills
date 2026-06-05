@@ -21,7 +21,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 | Bulk translate visible text (meaning-preserving) | `tour_translate(...)` (blocks-and-polls; `wait=False` to fire-and-forget) |
 | Translate undo | `tour_translate_undo(...)` ; backups list via `tour_translate_backup_list` |
 | Compose new tour from existing screens | `tour_screen_copy(...)` (blocks-and-polls; absorbs legacy `copy_to` + `copy_status`) |
-| Per-screen anchorable nodes (for guides) | `tour_screen_node_list(snapshot_id=...)` |
+| Per-screen anchorable nodes (for guides) | `tour_screen_node_list(screen_id=...)` |
 | In-screen guides | `tour_guide_create`, `tour_guide_list`, `tour_guide_get`, `tour_guide_update`, `tour_guide_delete` — **default to `guide_type='tethered'`** with a `target_node_id` from `tour_screen_node_list`. Floating is the fallback for screens with no good anchor, not the easy path. |
 | Variables | `tour_variable_list`, `tour_variable_create`, `tour_variable_update`, `tour_variable_delete`, `tour_variable_insert`, `tour_variable_reference_list` |
 | Per-tour custom CSS / JS injection | `tour_injection_get(draft_id=..., kind=...)` / `tour_injection_set(draft_id=..., kind='guide_css'\|'replay_wide_css'\|'replay_wide_js', content=...)` |
