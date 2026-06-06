@@ -19,13 +19,13 @@ Data Injection swaps specific web request responses on a target site with struct
 - **Browser-automation MCP** launching **real Chrome** (not bundled Chromium — Chrome Web Store installs need real Chrome).
 - **Reprise Builder: Data Injection extension** installed in that Chrome. Without it, `injection_dataset_play(state='play')` returns `extension_not_installed`.
 
-## v2 atomic tool surface (19 tools)
+## v2 atomic tool surface (21 tools)
 
-The injection surface is 19 atomic tools, grouped by domain:
+The injection surface is 20 atomic data tools across three domains, plus `injection_docs` (the guide entry point) — 21 total:
 
 | Domain | Tools |
 |---|---|
-| **Dataset** | `injection_dataset_list`, `injection_dataset_get`, `injection_dataset_create`, `injection_dataset_add_sources`, `injection_dataset_duplicate`, `injection_dataset_update`, `injection_dataset_delete`, `injection_dataset_play(state='play'\|'stop')`, `injection_dataset_export`, `injection_dataset_import` |
+| **Dataset** | `injection_dataset_list`, `injection_dataset_get`, `injection_dataset_create`, `injection_dataset_add_sources`, `injection_dataset_duplicate`, `injection_dataset_update`, `injection_dataset_delete`, `injection_dataset_play(state='play'\|'stop')`, `injection_dataset_export`, `injection_dataset_export_status`, `injection_dataset_import` |
 | **Source** | `injection_source_list`, `injection_source_get`, `injection_source_update`, `injection_source_delete`, `injection_source_value_get`, `injection_source_value_set` |
 | **Dataset Adapter** | `injection_dataset_adapter_get`, `injection_dataset_adapter_set`, `injection_dataset_adapter_clear` |
 

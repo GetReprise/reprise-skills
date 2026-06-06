@@ -27,8 +27,8 @@ These are Pydantic-enforced at the wire boundary — they don't always appear in
 - `category`: `bug` | `tool_ergonomics` | `platform_gap` | `docs_gap` | `feature_request`
 - `severity`: `blocker` | `major` | `minor`
 - `reproducibility`: `confirmed` | `suspected` | `one_off` — NOT `always` / `never` / `intermittent` (those are rejected with `must be one of confirmed, suspected, one_off`)
-- `product`: `clone` | `tour` | `data_injection` (also accepts `replicate`, `html`, `replay`, `data-injection`)
-- `summary`: max **80 characters** — longer summaries are rejected by the schema. Put the detail in `details` (up to 2000 chars).
+- `product`: `clone` | `tour` | `data_injection` | `mcp_general` (wire spellings `replicate`, `html`, `replay` also accepted)
+- `summary`: max **300 characters** — longer summaries are rejected by the schema. Put the detail in `details` (up to 5000 chars).
 
 ## Rules
 

@@ -17,7 +17,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 | Enumerate captured-screen text | `tour_dom_text_node_list(draft_id=..., screen_node_id=..., text_contains=..., path_contains=...)` |
 | Edit text | `tour_dom_text_edit(draft_id=..., edits='[{...}]')` — one call = one undo step; `dry_run=True` previews |
 | Edit element attributes (`href`, `alt`, `class`, `aria-*`, `data-*`) | `tour_dom_attribute_node_list` / `tour_dom_attributes_edit` |
-| Swap an image | `tour_dom_attributes_edit(...)` with `attribute=src` — also accepts `resource:<id>` shorthand and validates the node is an `<img>` |
+| Swap an image | `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — validates the node is an `<img>`; pass a real URL (`resource:<id>` shorthand isn't supported for `src`) |
 | Bulk translate visible text (meaning-preserving) | `tour_translate(...)` (blocks-and-polls; `wait=False` to fire-and-forget) |
 | Translate undo | `tour_translate_undo(...)` ; backups list via `tour_translate_backup_list` |
 | Compose new tour from existing screens | `tour_screen_copy(...)` (blocks-and-polls) |
@@ -33,7 +33,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 ## v2 surface notes
 
 - **Every tool is one verb.** Atomic per-action tools — there's no `action=` parameter.
-- **Image swaps** use `tour_dom_attributes_edit(attribute='src', value=...)` — accepts the `resource:<id>` shorthand and validates the node is an `<img>`.
+- **Image swaps** use `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — `attribute` / `new_value` are keys inside each `edits` row, not call params. Validates the node is an `<img>`; pass a real URL (`resource:<id>` isn't supported for `src` yet).
 - **Authoring guides:** read screens yourself (`tour_screen_get`, `tour_screen_node_list`) and call `tour_guide_create` directly.
 - **`include` parameter for response slimming.** `tour_get` defaults to a minimal envelope; opt in to sections with `include="screens,guides,objects,sections,links,variables"`. Same pattern on heavy `_get` tools.
 
@@ -45,7 +45,7 @@ Use when the user wants to take a template tour and rewrite the visible product 
 2. **Rewrite the captured DOM, screen by screen:**
    - `tour_dom_text_node_list(draft_id=<new>, screen_node_id=<scrn-...>, text_contains=<source-term>)` — filter aggressively, surface `node_id`s.
    - `tour_dom_text_edit(draft_id=<new>, edits='[{...}]')` — all edits for a screen as one transformation. `dry_run=True` previews first.
-   - Attributes: `tour_dom_attribute_node_list` → `tour_dom_attributes_edit`. Images: `tour_dom_attributes_edit(attribute='src', value=...)` (URL or `resource:<id>`).
+   - Attributes: `tour_dom_attribute_node_list` → `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"...","new_value":"..."}]')`. Images: same call with `"attribute":"src"` and a real-URL `new_value` (`resource:<id>` isn't supported for `src`).
 3. **Rewrite the guides.** `tour_guide_list` → `tour_guide_get` → `tour_guide_update` per guide.
 4. **(Optional) polish + publish.** `tour_publish` + `tour_link_create`.
 
@@ -59,7 +59,7 @@ Use when the user wants a tour stitched together from screens that already exist
 
 1. **Find candidates.** `tour_search(query=..., search_scope='screens')` returns matched tours with screen IDs nested per tour. Finer control: `tour_screen_search(draft_id=..., query=...)`.
 2. **Create the destination.** `tour_create(title='...')`.
-3. **Copy each batch.** `tour_screen_copy(draft_id=<source>, target_draft_id=<new>, screen_ids='id1,id2,id3')`. Blocks-and-polls — returns once the copy finishes. Both must be drafts; if you only have a `published_id`, call `tour_get(published_id=...)` first to get the `draft_id`. Order is preserved; screens append. To run async, pass `wait=False` and poll with `tour_screen_copy(target_draft_id=<new>, wait=False)` (status-only).
+3. **Copy each batch.** `tour_screen_copy(draft_id=<source>, target_draft_id=<new>, screen_ids='id1,id2,id3')`. Blocks-and-polls — returns once the copy finishes. Both must be drafts; if you only have a `published_id`, call `tour_get(published_id=...)` first to get the `draft_id`. Order is preserved; screens append.
 4. **(Optional) guides + publish.** Walk `tour_screen_node_list` and `tour_guide_create` per screen, then `tour_publish` + `tour_link_create`.
 
 ### Verify shared-chrome matches before adding screens
