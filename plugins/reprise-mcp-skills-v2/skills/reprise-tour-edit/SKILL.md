@@ -1,6 +1,6 @@
 ---
 name: reprise-tour-edit
-description: Reprise Product Tour editing workflow (v2) — modifying an existing tour. MUST be invoked before any edit action on a published or draft tour. Triggers on `tour_dom_text_edit`, `tour_dom_attributes_edit`, `tour_screen_copy`, `tour_guide_*`, `tour_variable_*`, `tour_link_*`, `tour_injection_set`, or any request to modify / translate / rebrand an existing tour. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the v2 atomic-tool quick-reference, the re-skin vs translate distinction, the compose-from-screens flow, variables + links basics, and the `guide_css` surface. The full `--rguide-*` token list, complete theming reference, and full compose caveats live in `tour_docs(slug='tour')`. Distinct from `reprise-tour-capture` (recording new tours) and `reprise-tour-id-model` (ID-kind resolution).
+description: Reprise Product Tour editing workflow (v2) — modifying an existing tour. MUST be invoked before any edit action on a published or draft tour. Triggers on `tour_dom_text_edit`, `tour_dom_attributes_edit`, `tour_screen_copy`, `tour_guide_*`, `tour_variable_*`, `tour_link_*`, `tour_injection_set`, or any request to modify / translate / rebrand an existing tour. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the v2 atomic-tool quick-reference, the re-skin vs translate distinction, the compose-from-screens flow, variables + links basics, and the `guide_css` surface. The full `--rguide-*` token list and complete theming reference live in `tour_docs(slug='tour-theming')`; full compose caveats in `tour_docs(slug='tour-authoring')`. Distinct from `reprise-tour-capture` (recording new tours) and `reprise-tour-id-model` (ID-kind resolution).
 version: 0.1.0
 ---
 
@@ -20,7 +20,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 | Swap an image | `tour_dom_attributes_edit(...)` with `attribute=src` — also accepts `resource:<id>` shorthand and validates the node is an `<img>` |
 | Bulk translate visible text (meaning-preserving) | `tour_translate(...)` (blocks-and-polls; `wait=False` to fire-and-forget) |
 | Translate undo | `tour_translate_undo(...)` ; backups list via `tour_translate_backup_list` |
-| Compose new tour from existing screens | `tour_screen_copy(...)` (blocks-and-polls; absorbs legacy `copy_to` + `copy_status`) |
+| Compose new tour from existing screens | `tour_screen_copy(...)` (blocks-and-polls) |
 | Per-screen anchorable nodes (for guides) | `tour_screen_node_list(screen_id=...)` |
 | In-screen guides | `tour_guide_create`, `tour_guide_list`, `tour_guide_get`, `tour_guide_update`, `tour_guide_delete` — **default to `guide_type='tethered'`** with a `target_node_id` from `tour_screen_node_list`. Floating is the fallback for screens with no good anchor, not the easy path. |
 | Variables | `tour_variable_list`, `tour_variable_create`, `tour_variable_update`, `tour_variable_delete`, `tour_variable_insert`, `tour_variable_reference_list` |
@@ -32,9 +32,9 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 
 ## v2 surface notes
 
-- **No `action=` literal anywhere.** Every tool is one verb. If your client's tool descriptions still show `action=` strings, the connection is the v1 polymorphic surface — switch to v2 or use the v1 plugin.
-- **`tour_dom_replace_image` was absorbed.** Use `tour_dom_attributes_edit(attribute='src', value=...)`. The tool accepts the `resource:<id>` shorthand and validates the node is `<img>`.
-- **`tour_guide_generate` was dropped.** Agents read screens themselves (`tour_screen_get`, `tour_screen_node_list`) and call `tour_guide_create` directly.
+- **Every tool is one verb.** Atomic per-action tools — there's no `action=` parameter.
+- **Image swaps** use `tour_dom_attributes_edit(attribute='src', value=...)` — accepts the `resource:<id>` shorthand and validates the node is an `<img>`.
+- **Authoring guides:** read screens yourself (`tour_screen_get`, `tour_screen_node_list`) and call `tour_guide_create` directly.
 - **`include` parameter for response slimming.** `tour_get` defaults to a minimal envelope; opt in to sections with `include="screens,guides,objects,sections,links,variables"`. Same pattern on heavy `_get` tools.
 
 ## Re-skin to a new vertical / persona / brand
@@ -68,7 +68,7 @@ A search hit that comes from a shared sidebar/nav surfaces every screen with tha
 
 ### Compose caveats
 
-- Both source and target must be **v4+ drafts**. Legacy v3 tours are rejected with `error: requires_v4_replay`.
+- Both source and target must be **v4+ drafts**. v3 tours are rejected with `error: requires_v4_replay`.
 - Source and target must differ. To clone an entire tour, use `tour_duplicate`.
 - Search is **literal text matching** against screen HTML + guide markdown — no OCR or LLM-generated descriptions.
 
@@ -83,10 +83,10 @@ A search hit that comes from a shared sidebar/nav surfaces every screen with tha
 
 **Don't guess class prefixes.** There is no `.reprise-tour-*`, `.repcl-*`, `.rps-*`, or `[class*=GuideBubble]` — those will silently miss. Default theme is **dark** (`#27292e` bubble bg), so any light/brand re-skin must override `--rguide-bg-color` or the bubble stays black.
 
-`tour_injection_set` must target a `draft_id`; passing a published ID errors with `wrong_id_kind`. Editor UI needs a refresh to apply MCP-written CSS; published tours apply on republish. Full token list and selector reference at `tour_docs(slug='tour')`.
+`tour_injection_set` must target a `draft_id`; passing a published ID errors with `wrong_id_kind`. Editor UI needs a refresh to apply MCP-written CSS; published tours apply on republish. Full token list and selector reference at `tour_docs(slug='tour-theming')`.
 
 ## After every session
 
 `platform_summary_report` + `platform_friction_report` per distinct issue — see `reprise-session-close`.
 
-The full editor surface (lifecycle actions, custom kinds, search semantics, v3-vs-v4 constraints, capture toolbar mount, full theming token list) lives in `tour_docs(slug='tour')`. For ID-kind questions, see `reprise-tour-id-model`.
+The full editor surface lives across the task-area guides: authoring (objects, variables, sections, DOM edits, search semantics, compose) in `tour_docs(slug='tour-authoring')`, the `guide_css` token list in `tour_docs(slug='tour-theming')`, and publish + lifecycle in `tour_docs(slug='tour-publish')`. For ID-kind questions, see `reprise-tour-id-model`.

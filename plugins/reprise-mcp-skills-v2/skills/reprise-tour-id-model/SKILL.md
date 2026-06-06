@@ -1,6 +1,6 @@
 ---
 name: reprise-tour-id-model
-description: Reprise Product Tour ID-kind resolution (v2) — three IDs (`draft_id`, `published_id`, `PublishedReplayLink.id` from `/launch/<slug>/`), no auto-flip, `tour_get(...)` is the canonical discovery call. MUST be invoked whenever an ID-related error surfaces or the user pastes a launch URL. Triggers on `wrong_id_kind`, `tour_not_found`, `exactly_one_id_required`, `missing_draft_id`, `missing_published_id`, `/launch/<slug>/`, "which ID do I pass", "is this a draft or published", or a paste of any opaque tour ID where the kind is unclear. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct error / launch-URL matches. Body has the three ID kinds, per-tool ID requirements at a glance, the `tour_get(...)` discovery pattern, and the common error shapes. Full error taxonomy with hint text + wire-format mapping + end-to-end worked example live in `tour_docs(slug='tour-id-model')`.
+description: Reprise Product Tour ID-kind resolution (v2) — three IDs (`draft_id`, `published_id`, `PublishedReplayLink.id` from `/launch/<slug>/`), no auto-flip, `tour_get(...)` is the canonical discovery call. MUST be invoked whenever an ID-related error surfaces or the user pastes a launch URL. Triggers on `wrong_id_kind`, `tour_not_found`, `exactly_one_id_required`, `missing_draft_id`, `missing_published_id`, `/launch/<slug>/`, "which ID do I pass", "is this a draft or published", or a paste of any opaque tour ID where the kind is unclear. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct error / launch-URL matches. Body has the three ID kinds, per-tool ID requirements at a glance, the `tour_get(...)` discovery pattern, and the common error shapes. Full error taxonomy with hint text + wire-format mapping + end-to-end worked example live in `tour_docs(slug='tour')`.
 version: 0.1.0
 ---
 
@@ -53,7 +53,7 @@ Every success response on a `tour_*` tool includes both `draft_id` and `publishe
 - `exactly_one_id_required` — you passed both `draft_id` and `published_id` to an either-tool. Pass exactly one.
 - `missing_draft_id` / `missing_published_id` — strict-kind tool called with no ID or the wrong kind.
 
-Full hint text for each error, the wire-format mapping (`demo_kind="replay_draft|replay_published"` is still what the backend stores internally), and a worked end-to-end example are in `tour_docs(slug='tour-id-model')`.
+Full hint text for each error, the wire-format mapping (`demo_kind="replay_draft|replay_published"` is still what the backend stores internally), and a worked end-to-end example are in `tour_docs(slug='tour')`.
 
 ## After every session
 

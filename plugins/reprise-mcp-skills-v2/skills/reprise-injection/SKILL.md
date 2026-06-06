@@ -1,6 +1,6 @@
 ---
 name: reprise-injection
-description: Reprise Data Injection configuration workflow (v2). MUST be invoked before any `injection_*` MCP call. Primarily for injecting data into a LIVE application via the Reprise extension; secondarily into a Reprise clone. Covers populating charts, tables, KPI tiles, dropdowns by swapping API responses at runtime. Triggers on any `injection_*` MCP tool, `dataset_id`, `Dataset → Source → Value`, `data injection`, or `Data Studio`. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the v2 atomic-tool surface, the two-phase wiring/data framework, the load-bearing principles, the canonical entry point, and the top catastrophic gotchas. Full vocabulary table, complete gotcha catalog, response-template derivation algorithm, adapter mechanics, and activation-reason taxonomy all live in `injection_docs(slug='injection')`. NOT a target — data injection cannot target a Product Tour directly.
+description: Reprise Data Injection configuration workflow (v2). MUST be invoked before any `injection_*` MCP call. Primarily for injecting data into a LIVE application via the Reprise extension; secondarily into a Reprise clone. Covers populating charts, tables, KPI tiles, dropdowns by swapping API responses at runtime. Triggers on any `injection_*` MCP tool, `dataset_id`, `Dataset → Source → Value`, `data injection`, or `Data Studio`. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the v2 atomic-tool surface, the two-phase wiring/data framework, the load-bearing principles, the canonical entry point, and the top catastrophic gotchas. Full vocabulary lives in `injection_docs(slug='injection')`; response-template derivation in `injection_docs(slug='injection-authoring')`; the matching-rules catalog in `injection_docs(slug='injection-conditions')`; adapter mechanics in `injection_docs(slug='injection-adapters')`; the activation/handshake reason taxonomy in `injection_docs(slug='injection-play')`. NOT a target — data injection cannot target a Product Tour directly.
 version: 0.1.0
 ---
 
@@ -21,7 +21,7 @@ Data Injection swaps specific web request responses on a target site with struct
 
 ## v2 atomic tool surface (19 tools)
 
-The legacy polymorphic `injection_*` tools (`injection_widget`, `injection_config`, `injection_rule`, `injection_object`, `injection_product_area`, `injection_studio`, `injection_target`) are **dropped entirely** in v2. The v2 surface is:
+The injection surface is 19 atomic tools, grouped by domain:
 
 | Domain | Tools |
 |---|---|
@@ -31,7 +31,7 @@ The legacy polymorphic `injection_*` tools (`injection_widget`, `injection_confi
 
 Sources are minted via `injection_dataset_create(sources_json=...)` or `injection_dataset_add_sources(...)` — there's no standalone source create. Each dataset has at most one active adapter (1:1 in the product UI); the three `injection_dataset_adapter_*` tools cover read/upsert/clear.
 
-`injection_dataset_play` merges legacy `activate` + `deactivate` into one tool with `state='play'|'stop'`. `injection_dataset_export` / `_import` are blocks-and-polls — `wait=False` to fire-and-forget.
+`injection_dataset_play(state='play'|'stop')` toggles injection on/off. `injection_dataset_export` / `_import` are blocks-and-polls — `wait=False` to fire-and-forget.
 
 ## The two-phase framework — don't mix them
 
@@ -44,15 +44,15 @@ Two loops with distinct failure axes. Mixing them is the #1 wasted-time pattern.
 
 ## Vocabulary
 
-Data Studio uses a flat **Dataset → Source → Value** model. A Source fuses what some legacy tool names called Widget / DataObjectConfig / InterceptionRule; a Value is what some called DataObject. The v2 surface uses Source / Value vocabulary throughout. Full vocabulary table at `injection_docs(slug='injection')`.
+Data Studio uses a flat **Dataset → Source → Value** model. A Source is one intercepted endpoint — it carries the `target_url`, `conditions`, `response_template`, an optional adapter link, and its data rows (Values). Full vocabulary at `injection_docs(slug='injection')`.
 
 ## Workflow
 
 **Phase A — Plumbing with sentinels:**
 
 1. **Identify the target request** via the BMA. Record URL + method + raw response body. Note `fetch` vs `XMLHttpRequest` (adapters only intercept `fetch`).
-2. **Pattern-search.** `search_patterns(symptom='...', product='data_injection')` if available — pattern search is part of the v1 monolith and may not be in the v2 catalog yet; skip if absent.
-3. **Derive the schema from the captured body** — don't invent it. Either pass the raw body in `response_template` (inference produces the triple) or pass the `{template, data_map, injection_point}` triple under `response_template_raw` when inference can't cover the shape. Full derivation algorithm at `injection_docs(slug='injection')`.
+2. **Pattern-search.** `search_patterns(symptom='...', product='data_injection')` if available — may not be in the v2 catalog; skip if absent.
+3. **Derive the schema from the captured body** — don't invent it. Either pass the raw body in `response_template` (inference produces the triple) or pass the `{template, data_map, injection_point}` triple under `response_template_raw` when inference can't cover the shape. Full derivation algorithm at `injection_docs(slug='injection-authoring')`.
 4. **Build the dataset + source + Value in ONE atomic call.** See "Canonical entry point" below.
 5. **Open the dataset editor** at `https://<host>/data-studio/datasets/<dataset_id>` in a side tab — ground truth for what Reprise has stored. Keep open through Phase B to disambiguate wiring vs data failures.
 6. **Play.** `injection_dataset_play(dataset_id=..., state='play')` returns a `handshake_expression` — run it via the BMA. Structured `{success, reason}` reply distinguishes real success from `extension_not_installed` / `extension_outdated` / `extension_not_responding`.
@@ -99,13 +99,13 @@ Each dataset has at most one active adapter. Three tools:
 - `injection_dataset_adapter_set(dataset_id=..., parse_function=..., serialize_function=..., adapter_config='{}')` — upsert. Creates on first call, PATCHes on subsequent. **PATCH preserves what you don't pass:** omit `adapter_config` and the previous value is retained; omit `parse_function` and the previous body is retained. The 1:1 invariant is enforced server-side (sets `always_run=True`, clears sibling rows).
 - `injection_dataset_adapter_clear(dataset_id=...)` — unlink the active adapter. Idempotent.
 
-The standalone adapter library family from v1 is dropped — agent surface is opinionated for the 1:1 product reality.
+There are no standalone adapter-library tools — the surface is opinionated for the 1:1 dataset↔adapter relationship the product enforces.
 
 ## Top catastrophic gotchas
 
-The full catalog is in `injection_docs(slug='injection')`. These three are silent — accepted at create time, break at runtime, no error:
+The full catalog is in `injection_docs(slug='injection-authoring')` (matching rules in `injection_docs(slug='injection-conditions')`). These three are silent — accepted at create time, break at runtime, no error:
 
-1. **`metadata.sync = true` or the rule never fires.** Without it, the rule isn't included in `play_config.sync_interception_rules` and the runtime filter treats it as inactive. (In v2 the field is just `metadata`; in v1 it was `interception_rule_metadata`.)
+1. **`metadata.sync = true` or the rule never fires.** Without it, the rule isn't included in `play_config.sync_interception_rules` and the runtime filter treats it as inactive.
 2. **Conditions shape — typed-dict form is mandatory.** Flat shorthand (`{"method": "GET"}`) is accepted at create but **never matches at runtime** — the matcher reads `rule.type` / `rule.value`. Always: `{"type": "method", "value": "GET"}`, `{"type": "url", "test": "contains", "value": "/api"}`.
 3. **One source per `(target_url, injection_point)` pair — last `replace` wins.** N sources sharing the same target URL + array `injection_point` have `apply_rule_modifications` walk them in order; the last `replace` wins and the others' values are silently overwritten. One response feeding N charts → ONE source whose `data_map` has N columns.
 
@@ -113,4 +113,4 @@ The full catalog is in `injection_docs(slug='injection')`. These three are silen
 
 `platform_summary_report` + `platform_friction_report` per distinct issue — see `reprise-session-close`.
 
-For everything else — full vocabulary, complete gotcha catalog, response-template derivation algorithm, adapter mechanics, response-shape trims, failure-modes table, activation-reason taxonomy, resuming prior sessions — `injection_docs(slug='injection')`.
+For everything else: vocabulary and the data model in `injection_docs(slug='injection')`; the response-template derivation algorithm, response-shape trims, and resuming prior work in `injection_docs(slug='injection-authoring')`; the matching-rules reference in `injection_docs(slug='injection-conditions')`; adapter mechanics in `injection_docs(slug='injection-adapters')`; the activation/handshake reason taxonomy and export/import in `injection_docs(slug='injection-play')`.

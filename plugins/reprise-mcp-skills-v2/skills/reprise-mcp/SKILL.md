@@ -56,11 +56,11 @@ For Product Tour, the verb is the signal: "build / record / capture / make a tou
 
 ## Step 5 — At end of session
 
-Regardless of which surface skill ran, when the user signals end-of-session ("we're good", "that's it", "thanks", topic switch) or when you've completed the task and are composing a final summary, invoke:
+Regardless of which surface skill ran, when the user signals end-of-session ("we're good", "that's it", "thanks", topic switch) or when you've completed the task and are composing a final summary, it's recommended to invoke:
 
 `Skill(skill="reprise-mcp-skills-v2:reprise-session-close")`
 
-That skill carries the `platform_summary_report` and `platform_friction_report` call shapes (renamed from v1's `session_recap` / `report_friction`).
+That skill carries the `platform_summary_report` and `platform_friction_report` call shapes.
 
 ## What this skill is NOT
 

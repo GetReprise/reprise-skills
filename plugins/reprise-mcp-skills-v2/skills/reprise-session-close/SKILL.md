@@ -1,24 +1,24 @@
 ---
 name: reprise-session-close
-description: End-of-session reporting protocol for Reprise MCP v2 sessions. MUST be invoked when the user signals end-of-session ("we're good", "that's it", "thanks", wraps up, switches topic) OR when the agent has completed a Reprise task and is composing its final summary. Usually invoked by the `reprise-mcp` router at session end. Calls `platform_summary_report` once and `platform_friction_report` once per distinct issue. Body has the v2 tool names (renamed from v1's `session_recap` / `report_friction`) plus the Pydantic-enforced argument constraints (enums, length caps) for `platform_friction_report` that aren't always surfaced in client-rendered tool descriptions.
+description: End-of-session reporting protocol for Reprise MCP v2 sessions. Recommended when the user signals end-of-session ("we're good", "that's it", "thanks", wraps up, switches topic) OR when the agent has completed a Reprise task and is composing its final summary. Usually invoked by the `reprise-mcp` router at session end. Calls `platform_summary_report` once and `platform_friction_report` once per distinct issue. Body has the two tool names plus the Pydantic-enforced argument constraints (enums, length caps) for `platform_friction_report` that aren't always surfaced in client-rendered tool descriptions.
 version: 0.1.0
 ---
 
 # Reprise Session Close (v2)
 
-Every Reprise MCP session ends with one `platform_summary_report` call and one `platform_friction_report` call per distinct friction point. End-of-session is exactly when models forget to call cleanup tools — that's why this is a triggered skill rather than instructions buried in tool descriptions.
+Recommended at the end of a Reprise MCP session: one `platform_summary_report` call and one `platform_friction_report` call per distinct friction point. End-of-session is exactly when models forget to call cleanup tools — that's why this is a triggered skill rather than instructions buried in tool descriptions.
 
-## Tool names in v2
+## The two tools
 
-- v1 `session_recap` → v2 **`platform_summary_report`**
-- v1 `report_friction` → v2 **`platform_friction_report`**
+- **`platform_summary_report`** — once per session.
+- **`platform_friction_report`** — once per distinct friction point.
 
-Both are unprefixed (cross-product) in v2 and live on every scoped endpoint (`/v2/mcp/`, `/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`).
+Both are cross-product (`platform_`-prefixed) and live on every scoped endpoint (`/v2/mcp/`, `/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`).
 
 ## What to call
 
 - **`platform_summary_report` — once per session.** Plain tool (no elicitation). Markdown is fine in `outcome_summary` — include "what was configured" and "what's left open." Round `time_spent_seconds` generously. The server returns a `session_id` that later `platform_friction_report` calls can link to.
-- **`platform_friction_report` — once per distinct issue.** Submit it **even in autonomous sessions** — when the client doesn't advertise elicitation, the tool persists the draft verbatim with `elicitation_confirmed=false`. Don't skip just because no human is there.
+- **`platform_friction_report` — once per distinct issue.** Worth submitting **even in autonomous sessions** — when the client doesn't advertise elicitation, the tool persists the draft verbatim with `elicitation_confirmed=false`, so it's still useful when no human is there to confirm.
 
 ## `platform_friction_report` argument constraints
 
@@ -27,7 +27,7 @@ These are Pydantic-enforced at the wire boundary — they don't always appear in
 - `category`: `bug` | `tool_ergonomics` | `platform_gap` | `docs_gap` | `feature_request`
 - `severity`: `blocker` | `major` | `minor`
 - `reproducibility`: `confirmed` | `suspected` | `one_off` — NOT `always` / `never` / `intermittent` (those are rejected with `must be one of confirmed, suspected, one_off`)
-- `product`: `clone` | `tour` | `data_injection` (legacy spellings `replicate`, `html`, `replay`, `data-injection` also accepted)
+- `product`: `clone` | `tour` | `data_injection` (also accepts `replicate`, `html`, `replay`, `data-injection`)
 - `summary`: max **80 characters** — longer summaries are rejected by the schema. Put the detail in `details` (up to 2000 chars).
 
 ## Rules
