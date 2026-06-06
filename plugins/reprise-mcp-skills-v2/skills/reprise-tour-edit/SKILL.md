@@ -26,7 +26,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 | Variables | `tour_variable_list`, `tour_variable_create`, `tour_variable_update`, `tour_variable_delete`, `tour_variable_insert`, `tour_variable_reference_list` |
 | Per-tour custom CSS / JS injection | `tour_injection_get(draft_id=..., kind=...)` / `tour_injection_set(draft_id=..., kind='guide_css'\|'replay_wide_css'\|'replay_wide_js', content=...)` |
 | Lifecycle | `tour_publish`, `tour_duplicate`, `tour_archive`, `tour_restore`, `tour_move`, `tour_metadata` (consolidates title/description/tags as PATCH-style — pass only the fields you want updated) |
-| Shareable published links | `tour_link_create(published_id=..., variables=...)` ; manage via `tour_link_list` / `tour_link_update` / `tour_link_delete` |
+| Shareable published links | `tour_link_create(published_id=..., title=..., variables=...)` ; manage via `tour_link_list` / `tour_link_update` / `tour_link_delete` |
 
 `tour_injection_set` returns metadata only (bytes, sha256, last_saved, unchanged, preview_url) so iterative edit loops don't flood context.
 
@@ -75,7 +75,7 @@ A search hit that comes from a shared sidebar/nav surfaces every screen with tha
 ## Variables and links
 
 - `tour_variable_list` / `tour_variable_create` / `tour_variable_update` / `tour_variable_delete` / `tour_variable_insert` / `tour_variable_reference_list` — manage variable *definitions* on the draft (source of truth) and wrap screen text with `variable_value` references via `tour_variable_insert`. The list tool returns full rows; there's no separate `_get`. `tour_variable_reference_list` pairs with `tour_variable_list`'s `usage_count` and surfaces where each reference lives — use it before consolidating duplicate-named variables.
-- Per-link override values (for a published tour) go via `tour_link_create(published_id=..., variables=...)`.
+- Per-link override values (for a published tour) go via `tour_link_create(published_id=..., title=..., variables=...)`.
 
 ## `tour_injection_set(kind='guide_css')` writes into the GUIDE iframe
 

@@ -70,7 +70,7 @@ When the user asks for guides on the captured screens, **default to tethered (po
 
 Per-screen flow:
 
-1. `tour_screen_node_list(screen_id=<from tour_screen_list>)` — returns up to 200 anchorable candidates (interactive elements, headings, aria-labeled nodes) with `tag` / `text` / `role` / `aria_label`. Pick the node whose `text` or `aria_label` matches the feature the guide describes.
+1. `tour_screen_node_list(screen_id=<from tour_screen_list>)` — returns up to 200 anchorable candidates (interactive elements, headings, aria-labeled nodes) with `sel` / `text` / `role` / `aria_label`. Pick the node whose `text` or `aria_label` matches the feature the guide describes.
 2. `tour_guide_create(draft_id=..., screen_id=..., guide_type='tethered', target_node_id=<from step 1>, text='<h2>Title</h2><p>Body</p>', buttons='[{"text":"Next","action":"flow_next_screen"}]')`. The `position` field auto-defaults sensibly (the server walks ancestors for header/nav and places the popup below if found, above otherwise) — only override when the default clips off-viewport.
 
 Only fall back to `guide_type='floating'` when there's genuinely no good anchor: a welcome screen, an outro CTA on an empty/transition screen, or a callout that's about the whole screen rather than one element. In that case, pass only the floating-compatible fields — `position` / `target_node_id` / `element_click` / `caret_enabled=True` / `pulse_enabled=True` are rejected at the MCP boundary with `floating_with_<field>` errors.
