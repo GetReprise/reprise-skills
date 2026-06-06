@@ -31,7 +31,7 @@ The injection surface is 20 atomic data tools across three domains, plus `inject
 
 Sources are minted via `injection_dataset_create(sources_json=...)` or `injection_dataset_add_sources(...)` — there's no standalone source create. Each dataset has at most one active adapter (1:1 in the product UI); the three `injection_dataset_adapter_*` tools cover read/upsert/clear.
 
-`injection_dataset_play(state='play'|'stop')` toggles injection on/off. `injection_dataset_export` / `_import` are blocks-and-polls — `wait=False` to fire-and-forget.
+`injection_dataset_play(state='play'|'stop')` toggles injection on/off. `injection_dataset_export(dataset_id=...)` kicks an async export and returns a task handle — poll `injection_dataset_export_status(dataset_id=...)` until `ready`/`failed`. `injection_dataset_import(file_path=...)` is one atomic call. (Neither takes a `wait` arg.)
 
 ## The two-phase framework — don't mix them
 
@@ -62,7 +62,7 @@ Data Studio uses a flat **Dataset → Source → Value** model. A Source is one 
 **Phase B — Real data:**
 
 9. **Re-confirm data shape.** Rows-not-columns (30-day chart = 30 rows × few columns). Scalar cells only. Display Names in `data_map` must match the keys you're about to write.
-10. **Replace sentinels** via `injection_source_value_set(value_id=..., data='[...]')`, replay, glance at the editor tab to confirm rows updated.
+10. **Replace sentinels** via `injection_source_value_set(dataset_id=..., source_id=..., value_id=..., data='[...]')`, replay, glance at the editor tab to confirm rows updated.
 11. **Verify against intent.** Editor matches intent but page doesn't → wiring (back to Phase A). Editor rows wrong → data (back to step 10).
 12. **Hand off.** Share the editor URL with the user so they can keep iterating.
 

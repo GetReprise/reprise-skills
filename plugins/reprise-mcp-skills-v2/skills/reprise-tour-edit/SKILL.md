@@ -35,7 +35,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 - **Every tool is one verb.** Atomic per-action tools — there's no `action=` parameter.
 - **Image swaps** use `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — `attribute` / `new_value` are keys inside each `edits` row, not call params. Validates the node is an `<img>`; pass a real URL (`resource:<id>` isn't supported for `src` yet).
 - **Authoring guides:** read screens yourself (`tour_screen_get`, `tour_screen_node_list`) and call `tour_guide_create` directly.
-- **`include` parameter for response slimming.** `tour_get` defaults to a minimal envelope; opt in to sections with `include="screens,guides,objects,sections,links,variables"`. Same pattern on heavy `_get` tools.
+- **`compact` flag for response slimming.** `tour_get` returns a compact envelope by default (`compact=True`); pass `compact=False` for the full sidebar/per-item detail. (There is no `include=` parameter on `tour_get`.)
 
 ## Re-skin to a new vertical / persona / brand
 
