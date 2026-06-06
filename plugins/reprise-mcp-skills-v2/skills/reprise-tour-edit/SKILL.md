@@ -17,7 +17,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 | Enumerate captured-screen text | `tour_dom_text_node_list(draft_id=..., screen_node_id=..., text_contains=..., path_contains=...)` |
 | Edit text | `tour_dom_text_edit(draft_id=..., edits='[{...}]')` — one call = one undo step; `dry_run=True` previews |
 | Edit element attributes (`href`, `alt`, `class`, `aria-*`, `data-*`) | `tour_dom_attribute_node_list` / `tour_dom_attributes_edit` |
-| Swap an image | `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — validates the node is an `<img>`; pass a real URL (`resource:<id>` shorthand isn't supported for `src`) |
+| Swap an image | `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — `node_id` must be a `vnde-` element (stale/non-vnode ids surface in `errors[]`); pass a real URL (`resource:<id>` shorthand isn't supported for `src`) |
 | Bulk translate visible text (meaning-preserving) | `tour_translate(...)` (blocks-and-polls; `wait=False` to fire-and-forget) |
 | Translate undo | `tour_translate_undo(...)` ; backups list via `tour_translate_backup_list` |
 | Compose new tour from existing screens | `tour_screen_copy(...)` (blocks-and-polls) |
@@ -33,7 +33,7 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 ## v2 surface notes
 
 - **Every tool is one verb.** Atomic per-action tools — there's no `action=` parameter.
-- **Image swaps** use `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — `attribute` / `new_value` are keys inside each `edits` row, not call params. Validates the node is an `<img>`; pass a real URL (`resource:<id>` isn't supported for `src` yet).
+- **Image swaps** use `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — `attribute` / `new_value` are keys inside each `edits` row, not call params. `node_id` must be a `vnde-` element (stale/non-vnode ids surface in `errors[]`); pass a real URL (`resource:<id>` isn't supported for `src` yet).
 - **Authoring guides:** read screens yourself (`tour_screen_get`, `tour_screen_node_list`) and call `tour_guide_create` directly.
 - **`compact` flag for response slimming.** `tour_get` returns a compact envelope by default (`compact=True`); pass `compact=False` for the full sidebar/per-item detail. (There is no `include=` parameter on `tour_get`.)
 
