@@ -1,12 +1,12 @@
 ---
 name: reprise-tour-edit
-description: Reprise Product Tour editing workflow (v2) — modifying an existing tour. MUST be invoked before any edit action on a published or draft tour. Triggers on `tour_dom_text_edit`, `tour_dom_attributes_edit`, `tour_screen_copy`, `tour_guide_*`, `tour_variable_*`, `tour_link_*`, `tour_injection_set`, or any request to modify / translate / rebrand an existing tour. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the v2 atomic-tool quick-reference, the re-skin vs translate distinction, the compose-from-screens flow, variables + links basics, and the `guide_css` surface. The full `--rguide-*` token list and complete theming reference live in `tour_docs(slug='tour-theming')`; full compose caveats in `tour_docs(slug='tour-authoring')`. Distinct from `reprise-tour-capture` (recording new tours) and `reprise-tour-id-model` (ID-kind resolution).
+description: Reprise Product Tour editing workflow (v2) — modifying an existing tour. MUST be invoked before any edit action on a published or draft tour. Triggers on `tour_dom_text_edit`, `tour_dom_attributes_edit`, `tour_screen_copy`, `tour_guide_*`, `tour_variable_*`, `tour_link_*`, `tour_injection_set`, or any request to modify / rebrand an existing tour. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the v2 atomic-tool quick-reference, the re-skin flow, the compose-from-screens flow, variables + links basics, and the `guide_css` surface. The full `--rguide-*` token list and complete theming reference live in `tour_docs(slug='tour-theming')`; full compose caveats in `tour_docs(slug='tour-authoring')`. Distinct from `reprise-tour-capture` (recording new tours) and `reprise-tour-id-model` (ID-kind resolution).
 version: 0.1.0
 ---
 
 # Reprise Product Tour Editing (v2)
 
-Editing an existing tour covers text / attribute / image edits, translation, guide management, variables, re-skinning to a new vertical, and stitching new tours together from screens of existing ones. ID kinds (draft vs published vs launch-link) are the most common source of confusion — see `reprise-tour-id-model` if a paste of `/launch/<slug>/` or a `wrong_id_kind` error is what brought you here.
+Editing an existing tour covers text / attribute / image edits, guide management, variables, re-skinning to a new vertical, and stitching new tours together from screens of existing ones. ID kinds (draft vs published vs launch-link) are the most common source of confusion — see `reprise-tour-id-model` if a paste of `/launch/<slug>/` or a `wrong_id_kind` error is what brought you here.
 
 ## Inspecting and editing — v2 atomic tool quick-reference
 
@@ -18,8 +18,6 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 | Edit text | `tour_dom_text_edit(draft_id=..., edits='[{...}]')` — one call = one undo step; `dry_run=True` previews |
 | Edit element attributes (`href`, `alt`, `class`, `aria-*`, `data-*`) | `tour_dom_attribute_node_list` / `tour_dom_attributes_edit` |
 | Swap an image | `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"src","new_value":"<URL>"}]')` — `node_id` must be a `vnde-` element (stale/non-vnode ids surface in `errors[]`); pass a real URL (`resource:<id>` shorthand isn't supported for `src`) |
-| Bulk translate visible text (meaning-preserving) | `tour_translate(...)` (blocks-and-polls; `wait=False` to fire-and-forget) |
-| Translate undo | `tour_translate_undo(...)` ; backups list via `tour_translate_backup_list` |
 | Compose new tour from existing screens | `tour_screen_copy(...)` (blocks-and-polls) |
 | Per-screen anchorable nodes (for guides) | `tour_screen_node_list(screen_id=...)` |
 | In-screen guides | `tour_guide_create`, `tour_guide_list`, `tour_guide_get`, `tour_guide_update`, `tour_guide_delete` — **default to `guide_type='tethered'`** with a `target_node_id` from `tour_screen_node_list`. Floating is the fallback for screens with no good anchor, not the easy path. |
@@ -48,10 +46,6 @@ Use when the user wants to take a template tour and rewrite the visible product 
    - Attributes: `tour_dom_attribute_node_list` → `tour_dom_attributes_edit(draft_id=..., edits='[{"node_id":"vnde-...","attribute":"...","new_value":"..."}]')`. Images: same call with `"attribute":"src"` and a real-URL `new_value` (`resource:<id>` isn't supported for `src`).
 3. **Rewrite the guides.** `tour_guide_list` → `tour_guide_get` → `tour_guide_update` per guide.
 4. **(Optional) polish + publish.** `tour_publish` + `tour_link_create`.
-
-### `tour_translate` is NOT a re-skin channel
-
-`tour_translate` is honest meaning-preserving translation across languages. Same-language `tour_translate` ignores "remap to <new vertical>" instructions. To re-skin within one language, use the per-screen text/attribute editors.
 
 ## Compose a new tour from existing screens
 

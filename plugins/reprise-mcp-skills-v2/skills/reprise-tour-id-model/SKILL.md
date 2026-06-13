@@ -22,7 +22,7 @@ A brand-new tour has only `draft_id`. After publish: both. A tour with unpublish
 
 | Bucket | Tools | Param signature |
 |---|---|---|
-| Strict draft | `tour_guide_*` (all); `tour_translate`, `tour_translate_undo`, `tour_translate_backup_list`; `tour_publish`; `tour_injection_get`, `tour_injection_set`; `tour_dom_*`; `tour_variable_*`; `tour_screen_copy` (source + target draft) | `draft_id` only |
+| Strict draft | `tour_guide_*` (all); `tour_publish`; `tour_injection_get`, `tour_injection_set`; `tour_dom_*`; `tour_variable_*`; `tour_screen_copy` (source + target draft) | `draft_id` only |
 | Strict published | `tour_link_*` (all) | `published_id` only |
 | Either, exactly-one-required | `tour_get`; `tour_screen_list`, `tour_screen_search`; `tour_duplicate`, `tour_archive`, `tour_restore`, `tour_move`, `tour_metadata` | `draft_id` or `published_id`, exactly one |
 

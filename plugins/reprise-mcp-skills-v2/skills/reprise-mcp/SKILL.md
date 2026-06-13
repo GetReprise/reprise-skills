@@ -24,7 +24,7 @@ If the connected MCP is **v1 polymorphic** (single tools like `tour_edit`, `tour
 |---|---|---|
 | **Clone** | Fix / debug / configure a captured interactive app | `clone_id`, snippet, `clone_api`, `replay_backend`, any `clone_*` MCP tool, `/sw-setup/` URL, "captured app", "the demo white-screens / goes blank / breaks after login", service-worker issues, snippet editing |
 | **Product Tour, NEW capture** | Record a new tour by capturing screens | `tour_capture_*`, `pairing_token`, `deep_link_url`, `tour_capture_now`, a brand-new `draft_id`, "Reprise Builder HTML extension", "record a tour", "build a tour of X", "capture screens" |
-| **Product Tour, EDITING existing** | Modify an existing tour (text, attributes, images, guides, translation, re-skin) | `tour_dom_*`, `tour_screen_copy`, `tour_guide_*`, `tour_variable_*`, `tour_link_*`, `tour_injection_set`, "edit this tour", "translate to X", "re-skin for prospect Y", "rebrand the tour", "add a guide / variable" |
+| **Product Tour, EDITING existing** | Modify an existing tour (text, attributes, images, guides, re-skin) | `tour_dom_*`, `tour_screen_copy`, `tour_guide_*`, `tour_variable_*`, `tour_link_*`, `tour_injection_set`, "edit this tour", "re-skin for prospect Y", "rebrand the tour", "add a guide / variable" |
 | **Product Tour, ID confusion** | Resolve a paste of a `/launch/<slug>/` URL or a `wrong_id_kind` error | `draft_id`, `published_id`, `PublishedReplayLink`, `/launch/<slug>/`, `wrong_id_kind`, `tour_not_found`, "what's the draft for this published tour", "I have a launch URL" |
 | **Data Injection** | Populate charts / tables / dropdowns with custom data by swapping API responses | any `injection_*` MCP tool, `dataset_id`, `Dataset → Source → Value`, "Data Studio", "populate the chart", "fake data on this page", "swap the API response", "inject data into the live app" (primary case) |
 
@@ -50,7 +50,7 @@ Call the right skill explicitly. Do this BEFORE any other tool call:
 - **Tour ID confusion** → `Skill(skill="reprise-mcp-skills-v2:reprise-tour-id-model")`
 - **Data Injection** → `Skill(skill="reprise-mcp-skills-v2:reprise-injection")`
 
-For Product Tour, the verb is the signal: "build / record / capture / make a tour" → `reprise-tour-capture`; "edit / translate / re-skin / change / fix / add a guide / rebrand" → `reprise-tour-edit`. The ID-model skill is a focused side-load when you hit an ID error or a launch-URL paste.
+For Product Tour, the verb is the signal: "build / record / capture / make a tour" → `reprise-tour-capture`; "edit / re-skin / change / fix / add a guide / rebrand" → `reprise-tour-edit`. The ID-model skill is a focused side-load when you hit an ID error or a launch-URL paste.
 
 **Clone is not yet on v2.** Clone tooling is rebuilt later in the v2 roadmap; until then, clone work uses the v1 polymorphic surface. If the user is on a clone, install / switch to the `reprise-mcp-skills` (v1) plugin and use that.
 
