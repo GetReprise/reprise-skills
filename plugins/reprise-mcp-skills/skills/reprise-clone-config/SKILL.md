@@ -1,7 +1,7 @@
 ---
 name: reprise-clone-config
 description: Reprise Clone configuration workflow. MUST be invoked before any action on a Reprise clone — writing or editing snippets, diagnosing white screens / blank panels / stale data on a clone preview, routing API endpoints, or walking a capture path. Triggers on `clone_id`, any `clone_*` MCP tool, `/sw-setup/`, `clone_api`, `replay_backend`, or any clone debug/preview URL. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the snippet-type vocabulary, the phase outline, the two forcing functions before any snippet, the two-stage routing model, and the top catastrophic gotchas. Telemetry blocklist, full gotcha catalog, state-management chooser, visual-symptoms triage, hallucinated-method list, snippet timing slots, and `clone_api` method reference all live in `docs(slug='clone')` and `docs(slug='clone-api')`.
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Reprise Clone Configuration
@@ -25,7 +25,7 @@ Legacy codes `RB` / `C` / `WS` are still accepted but new code should use the ca
 Skip either and you will write broken snippets.
 
 1. **`docs(slug='clone-api')`** — authoritative method reference for the SW global. **Never guess a method name.** Calling a non-existent method throws at snippet-init and **crashes the entire service worker**, taking the clone down. If the reference doesn't list what you need, fall back to `match_domain().pre_process()` / `.handle()` and build the behavior explicitly.
-2. **`search_patterns(product='clone', symptom='...')`** — phrase the symptom as the behavior you're seeing, not the fix you think you need. Treat hits with `score < ~0.5` as weak guesses.
+2. **`docs(slug='clone-patterns')`** — the clone pattern corpus (snippet recipes, RB API quirks, request-matching / routing fixes, known gotchas), read in full rather than keyword-searched. The bare call returns a table of contents with excerpts; pass `section='<name>'` to pull one topic's full text.
 
 ## Workflow
 
@@ -35,7 +35,7 @@ Skip either and you will write broken snippets.
 4. **Walk the path with the user via `clone_debug`.** Always start a debug session even when the page renders fine — debug captures JS errors and failed requests the agent can't see. After each path step: `clone_debug(action='errors')`, then `errors, clear=True` before the next step. `clone_debug(action='routes')` shows the registered-route table and the last 50 fetch decisions when a snippet looks right but isn't firing.
 5. **Apply snippet changes.** Every `clone_snippet(create|update)` response gives a `reload_via_sw_message` JS one-liner (fast path — evaluate in the preview tab) and an `apply_url` (`/sw-setup/?next=<current-path>`, fallback).
 6. **Verify data completeness.** A rendered page is not a working page. Row counts, placeholder cells, console errors, data-dependent interactions (sort/filter/pagination).
-7. **Record.** `clone_note` for status + non-obvious fixes; `patterns(action='append')` for reusable client techniques.
+7. **Record.** `clone_note` for status + non-obvious fixes. For a reusable client technique worth adding to the shared corpus, file `report_friction(category='feature_request', ...)` with the symptom/cause/fix — the pattern corpus is now repo-managed, so there's no in-session pattern write tool.
 
 ## Two-stage routing model — internalize this
 

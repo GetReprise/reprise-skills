@@ -1,7 +1,7 @@
 ---
 name: reprise-injection
 description: Reprise Data Injection configuration workflow (v2). MUST be invoked before any `injection_*` MCP call. Primarily for injecting data into a LIVE application via the Reprise extension; secondarily into a Reprise clone. Covers populating charts, tables, KPI tiles, dropdowns by swapping API responses at runtime. Triggers on any `injection_*` MCP tool, `dataset_id`, `Dataset → Source → Value`, `data injection`, or `Data Studio`. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the v2 atomic-tool surface, the two-phase wiring/data framework, the load-bearing principles, the canonical entry point, and the top catastrophic gotchas. Full vocabulary lives in `injection_docs(slug='injection')`; response-template derivation in `injection_docs(slug='injection-authoring')`; the matching-rules catalog in `injection_docs(slug='injection-conditions')`; adapter mechanics in `injection_docs(slug='injection-adapters')`; the activation/handshake reason taxonomy in `injection_docs(slug='injection-play')`. NOT a target — data injection cannot target a Product Tour directly.
-version: 0.1.0
+version: 0.1.1
 ---
 
 # Reprise Data Injection (v2)
@@ -51,7 +51,7 @@ Data Studio uses a flat **Dataset → Source → Value** model. A Source is one 
 **Phase A — Plumbing with sentinels:**
 
 1. **Identify the target request** via the BMA. Record URL + method + raw response body. Note `fetch` vs `XMLHttpRequest` (adapters only intercept `fetch`).
-2. **Pattern-search.** `search_patterns(symptom='...', product='data_injection')` if available — may not be in the v2 catalog; skip if absent.
+2. **Patterns.** `injection_docs(slug='injection-patterns')` — the data-injection pattern corpus (TOC with excerpts by default; pass `section='<name>'` for one topic's full text).
 3. **Derive the schema from the captured body** — don't invent it. Either pass the raw body in `response_template` (inference produces the triple) or pass the `{template, data_map, injection_point}` triple under `response_template_raw` when inference can't cover the shape. Full derivation algorithm at `injection_docs(slug='injection-authoring')`.
 4. **Build the dataset + source + Value in ONE atomic call.** See "Canonical entry point" below.
 5. **Open the dataset editor** at `https://<host>/data-studio/datasets/<dataset_id>` in a side tab — ground truth for what Reprise has stored. Keep open through Phase B to disambiguate wiring vs data failures.

@@ -1,7 +1,7 @@
 ---
 name: reprise-tour-edit
 description: Reprise Product Tour editing workflow — modifying an existing tour. MUST be invoked before any edit action on a published or draft tour. Triggers on `tour_edit`, `tour_screen(action='copy_to')`, `tour_guide`, `tour_variable`, `tour_link`, `set_custom`, or any request to modify / translate / rebrand an existing tour. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the tool quick-reference, the re-skin vs translate distinction, the compose-from-screens flow, variables + links basics, and the `guide_css` surface. The full `--rguide-*` token list, complete theming reference, and full compose caveats live in `docs(slug='tour')`. Distinct from `reprise-tour-capture` (recording new tours) and `reprise-tour-id-model` (ID-kind resolution).
-version: 0.3.2
+version: 0.3.3
 ---
 
 # Reprise Product Tour Editing
@@ -27,10 +27,6 @@ Editing an existing tour covers text / attribute / image edits, translation, gui
 | Shareable published links | `tour_link(action='create', published_id=..., variables=...)` |
 
 `set_custom` returns metadata only (bytes, sha256, last_saved, unchanged, preview_url) so iterative edit loops don't flood context.
-
-## Pattern search before custom JS or diagnosis
-
-Before writing custom JS for a screen or diagnosing a broken tour, call `search_patterns(symptom='...', product='tour')`. Treat `score < ~0.5` as weak guesses — the tour pattern corpus is thinner than clone's.
 
 ## Re-skin to a new vertical / persona / brand
 

@@ -1,7 +1,7 @@
 ---
 name: reprise-tour-capture
 description: "Reprise Product Tour capture workflow — recording NEW tours via the Reprise Builder HTML Chrome extension. MUST be invoked before any `tour_capture` call. Triggers on `tour_capture`, `pairing_token`, `deep_link_url`, `capture_now`, a brand-new `draft_id`, or the Reprise Builder HTML extension. Usually invoked by the `reprise-mcp` router; can also auto-fire on direct keyword matches. Body has the 7-step flow at headline depth, the 3-tier extension-pairing escalation, the load-bearing page-settle / verify-the-page principles, and operational gotchas around browser-automation MCPs and proxy timeouts. Per-tier mechanics, `capture_now` envelope, `set_auto`, post-stop cleanup, install URLs, theming, re-skinning, and composing all live in `docs(slug='tour')`. NOT for editing existing tours — use `reprise-tour-edit`."
-version: 0.3.2
+version: 0.3.3
 ---
 
 # Reprise Product Tour Capture
@@ -59,10 +59,6 @@ On user-Chrome drivers (AppleScript, native browser-use) you don't need the upfr
 
 1. **Page-settle before each `capture_now`.** A capture of an unsettled page produces an unstyled / half-rendered screen with **no error signal**. Between navigation and `capture_now`: `page.waitForLoadState('networkidle')`, or `browser_wait_for` on a sentinel hero-text element, or an 800–1500ms blanket sleep. Re-apply after every cross-document navigation.
 2. **Verify the page is what you intended.** `capture_now` happily snapshots a 404, a soft-redirect, a "you must accept cookies" interstitial, or a CTA-triggered overlay — none fail your call. Before capturing: confirm URL, confirm title isn't a 404, confirm a sentinel element from the intended content is present. After CTA clicks (booking, signup, pricing), screenshot to verify; if an overlay landed on top, dismiss it before `capture_now`.
-
-## Pattern search before custom JS or diagnosis
-
-Before writing custom JS for a screen or diagnosing a broken tour, call `search_patterns(symptom='...', product='tour')`. Treat `score < ~0.5` as weak guesses — the tour pattern corpus is thinner than clone's.
 
 ## Preview before publish
 

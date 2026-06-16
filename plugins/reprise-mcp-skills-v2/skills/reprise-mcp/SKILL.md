@@ -1,7 +1,7 @@
 ---
 name: reprise-mcp
-description: Required entry point and router for ALL Reprise MCP v2 work. MUST be invoked immediately whenever the user wants to do anything with Reprise — fixing / building / editing / debugging / rebranding a Reprise demo, tour, clone, or captured app; troubleshooting blank or broken pages in a Reprise context; or any mention of "Reprise", "demo" (in a Reprise context), "tour", "capture", "preview URL", or any Reprise MCP tool. Users describe tasks in plain English ("fix my demo", "add data to this page", "build a tour of your app", "make this look like a different prospect") without naming Reprise's product surfaces; this router maps natural-language asks to the right surface skill (`reprise-tour-capture`, `reprise-tour-edit`, `reprise-tour-id-model`, `reprise-injection`, or `reprise-session-close`) and invokes it explicitly. Always read this skill first on any Reprise turn — it is the entry point. This is the v2 router; v2 exposes atomic per-action tool names (e.g. `tour_dom_text_edit`, `injection_dataset_create`) and tools live under `/v2/mcp/` and per-product scoped paths.
-version: 0.1.0
+description: Required entry point and router for ALL Reprise MCP v2 work. MUST be invoked immediately whenever the user wants to do anything with Reprise — fixing / building / editing / debugging / rebranding a Reprise demo, tour, clone, or captured app; troubleshooting blank or broken pages in a Reprise context; or any mention of "Reprise", "demo" (in a Reprise context), "tour", "capture", "preview URL", or any Reprise MCP tool. Users describe tasks in plain English ("fix my demo", "add data to this page", "build a tour of your app", "make this look like a different prospect") without naming Reprise's product surfaces; this router maps natural-language asks to the right surface skill (`reprise-clone-config`, `reprise-tour-capture`, `reprise-tour-edit`, `reprise-tour-id-model`, `reprise-injection`, or `reprise-session-close`) and invokes it explicitly. Always read this skill first on any Reprise turn — it is the entry point. This is the v2 router; v2 exposes atomic per-action tool names (e.g. `tour_dom_text_edit`, `injection_dataset_create`) and tools live under `/v2/mcp/` and per-product scoped paths.
+version: 0.1.1
 ---
 
 # Reprise MCP v2 — Router
@@ -12,7 +12,7 @@ You've landed here because the user wants to do Reprise work. This skill carries
 
 You're in scope if:
 - The user mentions Reprise, a Reprise preview URL, a Reprise demo, a tour, or any Reprise MCP tool.
-- The Reprise MCP v2 is connected. Tools you'll see: `tour_*` (61 atomic tools, incl. `tour_docs` / `tour_search`), `injection_*` (21 atomic tools, incl. `injection_docs`), `clone_docs` for Clone product guides, and cross-product `platform_*` (9): `platform_whoami`, `platform_friction_report`, `platform_friction_status`, `platform_summary_report`, plus the shared asset library `platform_folder_*` / `platform_asset_move`. Per-product scoped endpoints (`/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`) expose a smaller catalog for callers who only need one product.
+- The Reprise MCP v2 is connected. Tools you'll see: `tour_*` (61 atomic tools, incl. `tour_docs` / `tour_search`), `injection_*` (21 atomic tools, incl. `injection_docs`), `clone_*` (atomic tools, incl. `clone_docs` for Clone product guides), and cross-product `platform_*` (9): `platform_whoami`, `platform_friction_report`, `platform_friction_status`, `platform_summary_report`, plus the shared asset library `platform_folder_*` / `platform_asset_move`. Per-product scoped endpoints (`/v2/mcp/tour/`, `/v2/mcp/injection/`, `/v2/mcp/clone/`) expose a smaller catalog for callers who only need one product.
 
 If neither is true, this skill shouldn't have fired — answer the user's actual question without routing.
 
@@ -45,14 +45,13 @@ Don't guess; don't proceed without the answer. A wrong surface guess wastes far 
 
 Call the right skill explicitly. Do this BEFORE any other tool call:
 
+- **Clone** → `Skill(skill="reprise-mcp-skills-v2:reprise-clone-config")`
 - **Tour, new capture** → `Skill(skill="reprise-mcp-skills-v2:reprise-tour-capture")`
 - **Tour, editing existing** → `Skill(skill="reprise-mcp-skills-v2:reprise-tour-edit")`
 - **Tour ID confusion** → `Skill(skill="reprise-mcp-skills-v2:reprise-tour-id-model")`
 - **Data Injection** → `Skill(skill="reprise-mcp-skills-v2:reprise-injection")`
 
 For Product Tour, the verb is the signal: "build / record / capture / make a tour" → `reprise-tour-capture`; "edit / re-skin / change / fix / add a guide / rebrand" → `reprise-tour-edit`. The ID-model skill is a focused side-load when you hit an ID error or a launch-URL paste.
-
-**Clone is not yet on v2.** Clone tooling is rebuilt later in the v2 roadmap; until then, clone work uses the v1 polymorphic surface. If the user is on a clone, install / switch to the `reprise-mcp-skills` (v1) plugin and use that.
 
 ## Step 5 — At end of session
 

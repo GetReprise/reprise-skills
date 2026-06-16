@@ -1,7 +1,7 @@
 ---
 name: reprise-mcp
 description: Required entry point and router for ALL Reprise MCP work. MUST be invoked immediately whenever the user wants to do anything with Reprise — fixing / building / editing / debugging / rebranding a Reprise demo, tour, clone, or captured app; troubleshooting blank or broken pages in a Reprise context; or any mention of "Reprise", "demo" (in a Reprise context), "tour", "capture", "preview URL", or any Reprise MCP tool. Users describe tasks in plain English ("fix my demo", "add data to this page", "build a tour of your app", "make this look like a different prospect") without naming Reprise's product surfaces; this router maps natural-language asks to the right surface skill (`reprise-clone-config`, `reprise-tour-capture`, `reprise-tour-edit`, `reprise-tour-id-model`, `reprise-injection`, or `reprise-session-close`) and invokes it explicitly. Always read this skill first on any Reprise turn — it is the entry point.
-version: 0.3.0
+version: 0.3.1
 ---
 
 # Reprise MCP — Router
@@ -12,7 +12,7 @@ You've landed here because the user wants to do Reprise work. This skill carries
 
 You're in scope if:
 - The user mentions Reprise, a Reprise preview URL, a Reprise demo, a clone / tour, or any Reprise MCP tool.
-- The Reprise MCP is connected and its tools (`clone_*`, `tour_*`, `injection_*`, `docs`, `search_patterns`, `session_recap`, `report_friction`) are available.
+- The Reprise MCP is connected and its tools (`clone_*`, `tour_*`, `injection_*`, `docs`, `session_recap`, `report_friction`) are available.
 
 If neither is true, this skill shouldn't have fired — answer the user's actual question without routing.
 

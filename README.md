@@ -36,19 +36,18 @@ plugins/reprise-mcp-skills-v2/skills/      # v2 — atomic per-action surface
 ├── reprise-tour-capture/
 ├── reprise-tour-edit/
 ├── reprise-tour-id-model/
+├── reprise-clone-config/
 ├── reprise-injection/
 └── reprise-session-close/
 ```
 
 Each `SKILL.md` is self-contained. Frontmatter carries `version`; the repo tags releases.
 
-The v2 plugin omits `reprise-clone-config` for now — Clone is rebuilt later in the v2 roadmap. Clone work continues against the v1 polymorphic surface until then.
-
 ## Companion
 
 Skills assume the corresponding Reprise MCP is connected.
 
-- v1: `tour_*`, `clone_*`, `injection_*`, `docs`, `search_patterns`, `session_recap`, `report_friction`.
-- v2: `tour_*` (atomic), `injection_*` (atomic), `tour_docs`, `tour_guidance`, and cross-product `platform_*` (`platform_whoami`, `platform_summary_report`, `platform_friction_report`, `platform_folder_*`, `platform_asset_move`).
+- v1: `tour_*`, `clone_*`, `injection_*`, `docs`, `session_recap`, `report_friction`.
+- v2: `tour_*` (atomic), `clone_*` (atomic), `injection_*` (atomic), `tour_docs` / `clone_docs` / `injection_docs`, and cross-product `platform_*` (`platform_whoami`, `platform_summary_report`, `platform_friction_report`, `platform_folder_*`, `platform_asset_move`).
 
 Without the relevant MCP, the referenced tools aren't available and the skills won't fire usefully.
