@@ -12,6 +12,13 @@
       "source": "./plugins/reprise-mcp-skills",
       "category": "productivity",
       "homepage": "https://reprise.com"
+    },
+    {
+      "name": "reprise-mcp-skills-v2",
+      "description": "Alias of reprise-mcp-skills (kept so existing v2 installs keep resolving — do not remove).",
+      "source": "./plugins/reprise-mcp-skills",
+      "category": "productivity",
+      "homepage": "https://reprise.com"
     }
   ]
 }
