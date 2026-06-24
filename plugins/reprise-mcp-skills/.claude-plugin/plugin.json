@@ -1,9 +1,9 @@
 {
   "name": "reprise-mcp-skills",
-  "description": "Workflow skills for the Reprise MCP.",
+  "description": "Workflow skills for the Reprise MCP (atomic per-action surface).",
   "author": {
     "name": "Reprise",
     "email": "support@reprise.com"
   },
-  "version": "0.3.3"
+  "version": "1.0.0"
 }
